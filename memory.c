@@ -9,6 +9,10 @@
 #define MAX_STR 100
 #define MAX_NAME 15
 
+char (FILE*fp, char array[]);
+
+
+
 int main()
 {
   FILE *fp;
@@ -24,6 +28,7 @@ int main()
 void menu()
 {
 	int choice;
+	
 
 	do
 	{
@@ -39,6 +44,11 @@ void menu()
 			case 1:	game();
 				break;
 			case 2:	scores();
+				
+				
+				
+				char (fp, array)
+				
 				break;
 			case 0:	break;
 //				does nothing.
@@ -49,3 +59,24 @@ void menu()
 }
 
 void diffiultySelect()
+{
+	
+	
+	
+}
+
+char (FILE*fp, char array[])
+{
+char temp
+	do {
+
+		scanf( "%c", &temp);
+		fprintf(output,"%c", temp);
+	   }
+	while (temp != '\n');
+
+return char 
+}
+
+
+
