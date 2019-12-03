@@ -17,7 +17,7 @@ int difficultySelect();
 int main()
 {
 	FILE *fp;
-	int choice, difficulty;
+	int choice, difficulty, scoreboard[10] = NULL;
   
 	do
 	{
