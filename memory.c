@@ -53,14 +53,17 @@ int main()
 void menu()
 {
 		printf("***MEMORY!***\n");
-		printf("1. Play\n");
-		printf("2. Scoreboard\n");
-		printf("0. EXIT\n");
+		printf("1 - Play Game\n");
+		printf("2 - Check Scores\n");
+		printf("0 - EXIT\n");
 }
 
 int diffiultySelect()
 {
+	int difficulty;
 	
+	printf("Enter difficulty (1, 2, or 3): ");
+	scanf("%d", &difficulty);
 	
 	return difficulty;
 }
