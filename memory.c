@@ -14,7 +14,9 @@ int main()
   FILE *fp;
   
   menu();
+	
   output = fopen(argv[1], "w");
+	
   return 0;
 }
 
