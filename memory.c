@@ -16,7 +16,8 @@ int main()
   menu();
 	
   output = fopen(argv[1], "w");
-	
+	 
+   fclose(output);
   return 0;
 }
 
