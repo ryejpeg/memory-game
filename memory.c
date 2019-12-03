@@ -78,19 +78,19 @@ int score, i = 0, j = 0, counter = 0;
 
 	for (i; i< 15; i++)
 	{
-		for (j; j< 15; j++)
+		for (j; (j< 15) || (temp[i][j] != '\n') ; j++)
 		{
-			scanf("%c", temp);
-			fprintf(output,"%c", temp);
+			scanf("%c", temp[i][j]);
+			fprintf(output,"%c", temp[i][j]);
 		}
+		
+		do
+		{
+			fprintf(output, " %d", score);
+			counter ++;
+		}
+		while (counter != 10);
 	}
-	do
-	{
-		scanf("%d",&score);
-		fprintf(output,"%d", score);
-		counter ++;
-	}
-	while counter != 10;
 
 return char 
 }
