@@ -16,27 +16,11 @@ char (FILE*fp, char array[]);
 int main()
 {
   FILE *fp;
+	int main;
   
-  menu();
-	
-  
-	 
-   fclose(output);
-  return 0;
-}
-
-void menu()
-{
-	int choice;
-	
-
 	do
 	{
-		printf("MEMORY GAME\n");
-		printf("1. Play\n");
-		printf("2. Scoreboard\n");
-		printf("0. EXIT\n");
-
+		menu();
 		scanf("%d", &choice);
 
 		switch(choice)
@@ -47,15 +31,27 @@ void menu()
 				
 				
 				
-				char (fp, array)
+				outputnames(fp, array);
 				
 				break;
 			case 0:	break;
 //				does nothing.
 		}
+	}while(choice != 0);
+		
+	
+  
+	 
+   fclose(fp);
+  return 0;
+}
 
-	}
-	while(choice != 0);
+void menu()
+{
+		printf("MEMORY GAME\n");
+		printf("1. Play\n");
+		printf("2. Scoreboard\n");
+		printf("0. EXIT\n");
 }
 
 void diffiultySelect()
