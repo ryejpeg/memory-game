@@ -19,7 +19,7 @@ int main()
   
   menu();
 	
-  output = fopen(argv[1], "w");
+  
 	 
    fclose(output);
   return 0;
@@ -65,7 +65,7 @@ void diffiultySelect()
 	
 }
 
-char (FILE*fp, char array[])
+char outputnames(FILE*fp, char array[])
 {
 char temp
 	do {
