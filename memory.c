@@ -16,7 +16,7 @@ char (FILE*fp, char array[]);
 int main()
 {
   FILE *fp;
-	int main;
+	int choice, difficulty;
   
 	do
 	{
@@ -25,7 +25,8 @@ int main()
 
 		switch(choice)
 		{
-			case 1:	game();
+			case 1:	difficulty = difficultySelect();
+				game(difficulty);
 				break;
 			case 2:	scores();
 				
@@ -54,11 +55,11 @@ void menu()
 		printf("0. EXIT\n");
 }
 
-void diffiultySelect()
+int diffiultySelect()
 {
 	
 	
-	
+	return difficulty;
 }
 
 char outputnames(FILE*fp, char array[], int score)
