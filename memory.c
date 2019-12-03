@@ -8,3 +8,41 @@
 #include <string.h>
 #define MAX_STR 100
 #define MAX_NAME 15
+
+int main()
+{
+  FILE *fp;
+  
+  menu();
+  
+  return 0;
+}
+
+void menu()
+{
+	int choice;
+
+	do
+	{
+		printf("MEMORY GAME\n");
+		printf("1. Play\n");
+		printf("2. Scoreboard\n");
+		printf("0. EXIT\n");
+
+		scanf("%d", &choice);
+
+		switch(choice)
+		{
+			case 1:	game();
+				break;
+			case 2:	scores();
+				break;
+			case 0:	break;
+//				does nothing.
+		}
+
+	}
+	while(choice != 0);
+}
+
+void diffiultySelect()
