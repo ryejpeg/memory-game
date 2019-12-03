@@ -10,6 +10,9 @@
 #define MAX_NAME 15
 
 char (FILE*fp, char array[]);
+void menu();
+int difficultySelect();
+void game(int difficulty);
 
 
 
@@ -49,7 +52,7 @@ int main()
 
 void menu()
 {
-		printf("MEMORY GAME\n");
+		printf("***MEMORY!***\n");
 		printf("1. Play\n");
 		printf("2. Scoreboard\n");
 		printf("0. EXIT\n");
@@ -62,7 +65,7 @@ int diffiultySelect()
 	return difficulty;
 }
 
-char outputnames(FILE*fp, char array[], int score)
+char outputnames(FILE*fp, char array[][10], int score[])
 {
 char temp
 	do {
