@@ -9,22 +9,20 @@
 #define MAX_STR 100
 #define MAX_NAME 15
 
-char outputnames (FILE*fp, char array[]);
-void menu();
-int difficultySelect();
 void game(int difficulty);
-
-
+char outputnames (FILE*fp, char array[]);
+int menu();
+int difficultySelect();
 
 int main()
 {
-  FILE *fp;
+	FILE *fp;
 	int choice, difficulty;
   
 	do
 	{
-		menu();
-		scanf("%d", &choice);
+		choice = menu();
+
 
 		switch(choice)
 		{
@@ -36,26 +34,31 @@ int main()
 				
 				
 				outputnames(fp, array);
-				
 				break;
 			case 0:	break;
 //				does nothing.
 		}
-	}while(choice != 0);
+	}
+	while(choice != 0);
 		
 	
   
 	 
-   fclose(fp);
-  return 0;
+	fclose(fp);
+	
+	return 0;
 }
 
-void menu()
+int menu()
 {
-		printf("***MEMORY!***\n");
-		printf("1 - Play Game\n");
-		printf("2 - Check Scores\n");
-		printf("0 - EXIT\n");
+	int choice;
+	
+	printf("***MEMORY!***\n");
+	printf("1 - Play Game\n");
+	printf("2 - Check Scores\n");
+	printf("0 - EXIT\n");
+	
+	scanf("%d", &choice);
 }
 
 int diffiultySelect()
@@ -70,14 +73,15 @@ int diffiultySelect()
 
 char outputnames(FILE*fp, char array[][10], int score[])
 {
-char temp
+	char temp;
+	
 	do {
 		scanf("%s", temp);
 		fprintf(output,"%s", temp);
 	   }
 	while (temp != '\n');
 
-return char 
+	return char;
 }
 
 
