@@ -61,13 +61,12 @@ void diffiultySelect()
 	
 }
 
-char outputnames(FILE*fp, char array[])
+char outputnames(FILE*fp, char array[], int score)
 {
 char temp
 	do {
-
-		scanf( "%c", &temp);
-		fprintf(output,"%c", temp);
+		scanf("%s", temp);
+		fprintf(output,"%s", temp);
 	   }
 	while (temp != '\n');
 
