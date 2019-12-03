@@ -9,7 +9,7 @@
 #define MAX_STR 100
 #define MAX_NAME 15
 
-char (FILE*fp, char array[]);
+char outputnames (FILE*fp, char array[]);
 void menu();
 int difficultySelect();
 void game(int difficulty);
