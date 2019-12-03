@@ -73,16 +73,26 @@ int diffiultySelect()
 
 char outputnames(FILE*fp, char array[][10], int score[])
 {
-	char temp;
-	
-	do {
-		scanf("%s", temp);
-		fprintf(output,"%s", temp);
-	   }
-	while (temp != '\n');
+char temp;
+int score, i = 0, j = 0, counter = 0;
 
-	return char;
+	for (i; i< 15; i++)
+	{
+		for (j; j< 15; j++)
+		{
+			scanf("%c", temp);
+			fprintf(output,"%c", temp);
+		}
+	}
+	do
+	{
+		scanf("%d",&score);
+		fprintf(output,"%d", score);
+		counter ++;
+	}
+	while counter != 10;
+
+return char 
 }
-
 
 
