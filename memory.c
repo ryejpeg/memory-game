@@ -97,7 +97,7 @@ void outputnames(FILE*fp, char array[][10], int score[])
 		}
 
 }
-
+// copy and pasted from my code-Ulysses
 void coordinate( int *x, int *y, int *a ,  int *b);
 _Bool duplicate( int x, int y, int a, int b);
 void getcoord(int *x,int *y);
