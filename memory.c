@@ -13,7 +13,10 @@ void game(int difficulty);
 void outputnames (FILE*fp, char array[]);
 int menu();
 int difficultySelect();
-int flipping( int x, int y);
+void coordinate( int *x, int *y, int *a ,  int *b);
+void getcoord(int *x,int *y);
+_Bool duplicate( int x, int y, int a, int b);
+
 
 int main()
 {
