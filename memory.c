@@ -13,6 +13,7 @@ void game(int difficulty);
 void outputnames (FILE*fp, char array[]);
 int menu();
 int difficultySelect();
+int flipping( int x, int y);
 
 int main()
 {
@@ -95,8 +96,59 @@ void outputnames(FILE*fp, char array[][10], int score[])
 	return char; 
 }
 
+#include <stdio.h>
+void coordinate( int *x, int *y, int *a ,  int *b);
+_Bool duplicate( int x, int y, int a, int b);
+void getcoord(int *x,int *y);
+int main()
+{
+int x=0, y=0, a=0, b=0;
+	coordinate( &x,  &y, &a, &b);
+	
+
+return 0;
+}
+
+void coordinate( int *x, int *y, int *a, int *b)
+{
+int dup= 0;
+
+	getcoord(x,y);
+	getcoord(a,b);
+	dup = duplicate(*x,*y,*a,*b);
+	while (dup )
+	{
+		printf("duplicate\n");
+		getcoord(a,b);
+		dup = duplicate(*x,*y,*a,*b);
+	}
+
+	
 
 
+	
+}
+void getcoord(int *x, int*y)
+{
+
+	printf("Enter your coordinates\n");
+	scanf("%d\t%d",x,y);
+
+
+
+
+}
+
+
+_Bool duplicate( int x, int y, int a, int b)
+{
+	if(x ==a && y==b)
+	{
+		return 1;
+	}
+return 0;
+		
+}
 
 
 
