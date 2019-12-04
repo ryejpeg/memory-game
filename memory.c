@@ -10,7 +10,7 @@
 #define MAX_NAME 15
 
 void game(int difficulty);
-char outputnames (FILE*fp, char array[]);
+void outputnames (FILE*fp, char array[]);
 int menu();
 int difficultySelect();
 
@@ -71,7 +71,7 @@ int diffiultySelect()
 	return difficulty;
 }
 
-char outputnames(FILE*fp, char array[][10], int score[])
+void outputnames(FILE*fp, char array[][10], int score[])
 {
 	char temp;
 	int score, i = 0, j = 0, counter = 0;
