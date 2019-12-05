@@ -55,7 +55,8 @@ int main()
 			case 1:	difficulty = difficultySelect();
 				game(difficulty);
 				break;
-			case 2:	scores();
+			case 2:	
+			//	scores();
 				
 				
 				
