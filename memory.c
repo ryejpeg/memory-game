@@ -6,6 +6,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 #define MAX_STR 100
 #define MAX_NAME 15
 
