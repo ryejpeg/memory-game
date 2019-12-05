@@ -36,7 +36,8 @@ int main()
     	srand(time(NULL));
 
 	//declare local variables
-	int difficulty = 5, board_size = 0;
+	int board_size = 0;
+	difficulty = 5;
 
 	//define board size as a variable of difficulty
 	board_size = (2 * difficulty);
@@ -197,15 +198,15 @@ void prefill_board (int board_size, char game_board[board_size][board_size])
 
 void fill_board_with_pairs(int difficulty, int board_size, char game_board[board_size][board_size])
 {
-	//declare local variables
+	// declare local variables
 	int row = 0, column = 0, number_pairs = 0, counter = 0;
 	char pair_symbol = 'A';
 	_Bool pair = 1;
     
-	//controlling expression for previous looping attempt below (commented out)
-	number_pairs = (difficulty * board_size);
+	// controlling expression for previous looping attempt below (commented out)
+	// number_pairs = (difficulty * board_size);
 
-	//new idea for assigning pairs of "randomly" generated symbols, in tandem order (must be shuffled)
+	// new idea for assigning pairs of "randomly" generated symbols, in tandem order (must be shuffled)
 	for(int row_index = 0; row_index < board_size; row_index++)
 	{
 		for(int col_index = 0; col_index < board_size; col_index++)
@@ -271,23 +272,25 @@ void shuffle_game_board(int difficulty, int board_size, char game_board[board_si
 
 int random_number_generator(int board_size)
 {
-    //declare local variables
-    int number = 3;
-    
-    //use rand to make the number "random" within the range of the game board size
-    //(size of the indices of the 2D array) which is based on the difficulty level
-    number = ((rand() % ((board_size - 1) - 0 + 1)) + 0);
-    return number;
+	//declare local variables
+	int number = 3;
+
+	//use rand to make the number "random" within the range of the game board size
+	//(size of the indices of the 2D array) which is based on the difficulty level
+	number = ((rand() % ((board_size - 1) - 0 + 1)) + 0);
+
+	return number;
 }
 
 char random_symbol_generator(void)
 {
-    //declare local variables
-    char symbol = 'A';
-    
-    //use rand to make the symbol "random" within the range of ! to @
-    symbol = ((rand() % ('@' - '!' + 1)) + '!');
-    return symbol;
+	//declare local variables
+	char symbol = 'A';
+
+	//use rand to make the symbol "random" within the range of ! to @
+	symbol = ((rand() % ('@' - '!' + 1)) + '!');
+
+	return symbol;
 }
 
 
