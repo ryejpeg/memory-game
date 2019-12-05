@@ -28,6 +28,7 @@ int main()
 {
 	FILE *fp;
 	int choice, difficulty, scoreboard[10] = NULL;
+	int finalscore;
 	
 	int x=0, y=0, a=0, b=0;
 	coordinate( &x,  &y, &a, &b);
@@ -38,13 +39,6 @@ int main()
 	//declare local variables
 	int board_size = 0;
 	difficulty = 5;
-
-	//define board size as a variable of difficulty
-	board_size = (2 * difficulty);
-
-	//declare VLA: now that we have the difficulty, which determines the size of the game board
-	//(or 2D array), after adding 1 to properly shift the indices
-	char game_board[board_size][board_size];
 	
 	do
 	{
@@ -72,32 +66,6 @@ int main()
 	while(choice != 0);
 
 	
-	
-// move this section to game function START	
-	//prefill the game board with X's before the random characters, so we know which spots are taken
-	prefill_board (board_size, game_board);
-
-	//fill the game board with pairs, in tandem
-	fill_board_with_pairs(difficulty, board_size, game_board);
-	
-	//shufflew the board
-    shuffle_game_board(difficulty, board_size, game_board);
-
-    //testing to display the shuffled board, so that you can see it. it willl be a different size each time you run the game
-    for(int row_index = 0; row_index < board_size; row_index++)
-    {
-        for(int col_index = 0; col_index < board_size; col_index++)
-        {
-            printf("%c", game_board[row_index][col_index]);
-        }   
-        printf("\n");
-    }
-  
-// move this section to game function END
-		
-	
-  
-	 
 	fclose(fp);
 	
 	return 0;
@@ -123,6 +91,35 @@ int diffiultySelect()
 	scanf("%d", &difficulty);
 	
 	return difficulty;
+}
+
+void game(int difficulty)
+{
+	//define board size as a variable of difficulty
+	board_size = (2 * difficulty);
+
+	//declare VLA: now that we have the difficulty, which determines the size of the game board
+	//(or 2D array), after adding 1 to properly shift the indices
+	char game_board[board_size][board_size];
+	
+	//prefill the game board with X's before the random characters, so we know which spots are taken
+	prefill_board (board_size, game_board);
+
+	//fill the game board with pairs, in tandem
+	fill_board_with_pairs(difficulty, board_size, game_board);
+	
+	//shuffle the board
+	shuffle_game_board(difficulty, board_size, game_board);
+
+	//testing to display the shuffled board, so that you can see it. it willl be a different size each time you run the game
+	for(int row_index = 0; row_index < board_size; row_index++)
+	{
+		for(int col_index = 0; col_index < board_size; col_index++)
+		{
+			printf("%c", game_board[row_index][col_index]);
+		}
+		printf("\n");
+	}
 }
 
 void outputnames(FILE*fp, char array[][10], int score[])
@@ -292,6 +289,3 @@ char random_symbol_generator(void)
 
 	return symbol;
 }
-
-
-
