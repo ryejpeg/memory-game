@@ -16,13 +16,33 @@ int difficultySelect();
 void coordinate( int *x, int *y, int *a ,  int *b);
 void getcoord(int *x,int *y);
 _Bool duplicate( int x, int y, int a, int b);
-
+void prefill_board(int board_size, char game_board[board_size][board_size]);
+void fill_board_with_pairs(int difficulty, int board_size, char game_board[board_size][board_size]);
+void shuffle_game_board(int difficulty, int board_size, char game_board[board_size][board_size]);
+int random_number_generator(int board_size);
+char random_symbol_generator(void);
 
 int main()
 {
 	FILE *fp;
 	int choice, difficulty, scoreboard[10] = NULL;
-  
+	
+	//seed the "random" number generator with NULL
+    	srand(time(NULL));
+
+	//declare local variables
+	int difficulty = 5, board_size = 0;
+
+	//testing out game board with pseudo board_size
+	difficulty = ((rand() % (3 - 1 + 1)) + 1);
+
+	//define board size as a variable of difficulty
+	board_size = (2 * difficulty);
+
+	//declare VLA, now that we have the difficulty, which determines the size of the game board
+	//(or 2D array), after adding 1 to properly shift the indices
+	char game_board[board_size][board_size];
+	
 	do
 	{
 		choice = menu();
@@ -44,6 +64,27 @@ int main()
 		}
 	}
 	while(choice != 0);
+
+	//prefill the game board with X's before the random characters, so we know which spots are taken
+	prefill_board (board_size, game_board);
+
+	//fill the game board with pairs, in tandem
+	fill_board_with_pairs(difficulty, board_size, game_board);
+	
+	//shufflew the board
+    shuffle_game_board(difficulty, board_size, game_board);
+
+    //testing to display the shuffled board, so that you can see it. it willl be a different size each time you run the game
+    for(int row_index = 0; row_index < board_size; row_index++)
+    {
+        for(int col_index = 0; col_index < board_size; col_index++)
+        {
+            printf("%c", game_board[row_index][col_index]);
+        }   
+        printf("\n");
+    }
+  
+
 		
 	
   
@@ -144,81 +185,7 @@ return 0;
 		
 }
 
-
-
-
-//Del Myer, Project 9 (FINAL), TA Sara, group members: Ulysses & Ryan.
-//Create a basic, rudimentary game of memory. This will encompass evrything we have learned in class,
-//over the entire semester.
-//This verison of the game will incldue the extra credit option of making the matrix (game board) appear
-//each time an individual coordinate is entered by the user.
-
-//preprocessor directives and header files 
-#include <stdio.h>
-#include <string.h> //should try not to use
-#include <time.h>
-#include <stdlib.h>
-
-//define macro constants 
-
-//declare function prototypes
-void prefill_board(int board_size, char game_board[board_size][board_size]);
-
-void fill_board_with_pairs(int difficulty, int board_size, char game_board[board_size][board_size]);
-
-void shuffle_game_board(int difficulty, int board_size, char game_board[board_size][board_size]);
-
-int random_number_generator(int board_size);
-
-char random_symbol_generator(void);
-
 //declare global variables
-
-//main function
-int main( int argc, char *argv[])
-{
-    //seed the "random" number generator with NULL
-    srand(time(NULL));
-
-    //declare local variables
-    int difficulty = 5, board_size = 0;
-
-    //testing out game board with pseudo board_size
-    difficulty = ((rand() % (3 - 1 + 1)) + 1);
-
-    //define board size as a variable of difficulty
-    board_size = (2 * difficulty);
-
-    //declare VLA, now that we have the difficulty, which determines the size of the game board
-    //(or 2D array), after adding 1 to properly shift the indices
-    char game_board[board_size][board_size];
-
-    //prefill the game board with X's before the random characters, so we know which spots are taken
-    prefill_board (board_size, game_board);
-
-    //fill the game board with pairs, in tandem
-    fill_board_with_pairs(difficulty, board_size, game_board);
-
-    //shufflew the board
-    shuffle_game_board(difficulty, board_size, game_board);
-
-    //testing to display the shuffled board, so that you can see it. it willl be a different size each time you run the game
-    for(int row_index = 0; row_index < board_size; row_index++)
-    {
-        for(int col_index = 0; col_index < board_size; col_index++)
-        {
-            printf("%c", game_board[row_index][col_index]);
-        }   
-        printf("\n");
-    }
-
-
-    
-
-
-    //end program
-    return 0;
-}
 
 //define functions
 void prefill_board (int board_size, char game_board[board_size][board_size])
