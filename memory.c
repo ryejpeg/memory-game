@@ -35,13 +35,10 @@ int main()
 	//declare local variables
 	int difficulty = 5, board_size = 0;
 
-	//testing out game board with pseudo board_size
-	difficulty = ((rand() % (3 - 1 + 1)) + 1);
-
 	//define board size as a variable of difficulty
 	board_size = (2 * difficulty);
 
-	//declare VLA, now that we have the difficulty, which determines the size of the game board
+	//declare VLA: now that we have the difficulty, which determines the size of the game board
 	//(or 2D array), after adding 1 to properly shift the indices
 	char game_board[board_size][board_size];
 	
@@ -49,25 +46,30 @@ int main()
 	{
 		choice = menu();
 
-
 		switch(choice)
 		{
+				// first case deals with games.
 			case 1:	difficulty = difficultySelect();
 				game(difficulty);
-				break;
-			case 2:	
-			//	scores();
-				
-				
-				
 				outputnames(fp, array);
 				break;
+				
+				// second case deals with scoreboard display.
+			case 2:	
+			//	scores();
+
+
+				break;
+				
+				// case 0 does nothing.
 			case 0:	break;
-//				does nothing.
 		}
 	}
 	while(choice != 0);
 
+	
+	
+// move this section to game function START	
 	//prefill the game board with X's before the random characters, so we know which spots are taken
 	prefill_board (board_size, game_board);
 
@@ -87,7 +89,7 @@ int main()
         printf("\n");
     }
   
-
+// move this section to game function END
 		
 	
   
