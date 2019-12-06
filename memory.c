@@ -10,6 +10,7 @@
 #include <time.h>
 #define MAX_STR 100
 #define MAX_NAME 15
+#define TOTAL_NAME 10
 
 void game(int difficulty);
 void outputnames (FILE*fp, char array[][MAX_NAME], int score[]);
@@ -27,9 +28,9 @@ char random_symbol_generator(void);
 int main()
 {
 	FILE *fp;
-	int choice, difficulty, scoreboard[10] = NULL,score = 0;
+	int choice, difficulty, scoreboard[10] = 'NULL', score = 0;
 	int finalscore;
-	char array[MAX_STR][MAX_NAME];
+	char array[TOTAL_NAME][MAX_STR];
 	
 	int x=0, y=0, a=0, b=0;
 	coordinate( &x,  &y, &a, &b);
