@@ -28,12 +28,19 @@ char random_symbol_generator(void);
 int main()
 {
 	FILE *fp;
-	int choice, difficulty, scoreboard[10] = 'NULL', score = 0;
+	int choice, difficulty, scoreboard[TOTAL_NAME], score = 0;
 	int finalscore;
 	char array[TOTAL_NAME][MAX_STR];
 	
 	int x=0, y=0, a=0, b=0;
 	coordinate( &x,  &y, &a, &b);
+
+	// initialize scoreboard array
+	// -1 intiialization indicates it's not a true score 
+	for(int index = 0; index < TOTAL_NAME; index++)
+	{
+		scoreboard[index] = -1;
+	}
 	
 	//seed the "random" number generator with NULL
     	srand(time(NULL));
