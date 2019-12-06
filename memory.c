@@ -316,7 +316,6 @@ void displayScore(FILE *fp)
 	{
 		counter++;
 		indexScore++;
-		printf("%d\n\n", counter);
 	}
 
 	for(int index = 0; index < counter; index++)
