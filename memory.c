@@ -12,7 +12,7 @@
 #define MAX_NAME 15
 
 void game(int difficulty);
-void outputnames (FILE*fp, char array[]);
+void outputnames (FILE*fp, char array[][MAX_NAME], int score[]);
 int menu();
 int difficultySelect();
 void coordinate( int *x, int *y, int *a ,  int *b);
@@ -27,8 +27,9 @@ char random_symbol_generator(void);
 int main()
 {
 	FILE *fp;
-	int choice, difficulty, scoreboard[10] = NULL;
+	int choice, difficulty, scoreboard[10] = NULL,score = 0;
 	int finalscore;
+	char array[MAX_STR][MAX_NAME];
 	
 	int x=0, y=0, a=0, b=0;
 	coordinate( &x,  &y, &a, &b);
@@ -49,7 +50,7 @@ int main()
 				// first case deals with games.
 			case 1:	difficulty = difficultySelect();
 				game(difficulty);
-				outputnames(fp, array);
+				outputnames(fp, array,&score);
 				break;
 				
 				// second case deals with scoreboard display.
@@ -122,22 +123,23 @@ void game(int difficulty)
 	}
 }
 
-void outputnames(FILE*fp, char array[][10], int score[])
+void outputnames(FILE*fp, char array[][MAX_NAME], int score[])
 {
+	FILE*output;
 	char temp;
-	int score, i = 0, j = 0, counter = 0;
+	int i = 0, j = 0, counter = 0;
 
 		for (i; i< 15; i++)
 		{
-			for (j; (j< 15) || (temp[i][j] != '\n') ; j++)
+			for (j; (j< 15) || (temp != '\n') ; j++)
 			{
-				scanf("%c", temp[i][j]);
-				fprintf(output,"%c", temp[i][j]);
+				scanf("%c", &temp);
+				fprintf(output,"%c", temp);
 			}
 
 			do
 			{
-				fprintf(output, " %d", score);
+				fprintf(output, " %d", *score);
 				counter ++;
 			}
 			while (counter != 10);
@@ -289,3 +291,4 @@ char random_symbol_generator(void)
 
 	return symbol;
 }
+
