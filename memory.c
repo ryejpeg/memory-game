@@ -13,7 +13,7 @@
 #define TOTAL_NAME 10
 
 void game(int difficulty);
-void outputnames (FILE*fp, char array[][MAX_NAME], int score[]);
+void outputnames (FILE* fp, char array[TOTAL_NAME][MAX_STR], int score[]);
 int menu();
 int difficultySelect();
 void coordinate( int *x, int *y, int *a ,  int *b);
@@ -58,7 +58,7 @@ int main()
 				// first case deals with games.
 			case 1:	difficulty = difficultySelect();
 				game(difficulty);
-				outputnames(fp, array,&score);
+				outputnames(fp, array, &score);
 				break;
 				
 				// second case deals with scoreboard display.
@@ -92,7 +92,7 @@ int menu()
 	scanf("%d", &choice);
 }
 
-int diffiultySelect()
+int difficultySelect()
 {
 	int difficulty;
 	
@@ -105,7 +105,7 @@ int diffiultySelect()
 void game(int difficulty)
 {
 	//define board size as a variable of difficulty
-	board_size = (2 * difficulty);
+	int board_size = (2 * difficulty);
 
 	//declare VLA: now that we have the difficulty, which determines the size of the game board
 	//(or 2D array), after adding 1 to properly shift the indices
@@ -131,7 +131,7 @@ void game(int difficulty)
 	}
 }
 
-void outputnames(FILE*fp, char array[][MAX_NAME], int score[])
+void outputnames(FILE*fp, char array[TOTAL_NAME][MAX_STR], int score[])
 {
 	FILE*output;
 	char temp;
