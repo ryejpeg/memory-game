@@ -24,6 +24,7 @@ void fill_board_with_pairs(int difficulty, int board_size, char game_board[board
 void shuffle_game_board(int difficulty, int board_size, char game_board[board_size][board_size]);
 int random_number_generator(int board_size);
 char random_symbol_generator(void);
+void displayScore(FILE *fp);
 
 int main()
 {
@@ -31,6 +32,8 @@ int main()
 	int choice, difficulty, scoreboard[TOTAL_NAME], score = 0;
 	int finalscore;
 	char array[][MAX_STR];
+	
+	fp = fopen("scores.txt", "w");
 	
 	int x=0, y=0, a=0, b=0;
 
@@ -301,3 +304,24 @@ char random_symbol_generator(void)
 	return symbol;
 }
 
+void displayScore(FILE *fp)
+{
+	
+	int counter = 0, indexName = 0, indexScore = 0;
+	int scoreboard[TOTAL_NAME];
+	char array[10][100];
+	char temp = '\0';
+
+	while(fscanf(fp, "%s %d\n", array[indexScore], &scoreboard[indexScore]) == 2)
+	{
+		counter++;
+		indexScore++;
+		printf("%d\n\n", counter);
+	}
+
+	for(int index = 0; index < counter; index++)
+	{
+		printf("%s: ", array[index]);
+		printf("%d\n", scoreboard[index]);
+	}
+}
