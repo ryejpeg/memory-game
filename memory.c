@@ -13,7 +13,7 @@
 #define TOTAL_NAME 10
 
 void game(int difficulty);
-void outputnames (FILE* fp, char array[TOTAL_NAME][MAX_STR], int score[]);
+void outputnames (FILE* fp, char array[][MAX_STR], int score[]);
 int menu();
 int difficultySelect();
 void coordinate( int *x, int *y, int *a ,  int *b);
@@ -30,10 +30,10 @@ int main()
 	FILE *fp;
 	int choice, difficulty, scoreboard[TOTAL_NAME], score = 0;
 	int finalscore;
-	char array[TOTAL_NAME][MAX_STR];
+	char array[][MAX_STR];
 	
 	int x=0, y=0, a=0, b=0;
-	coordinate( &x,  &y, &a, &b);
+
 
 	// initialize scoreboard array
 	// -1 intiialization indicates it's not a true score 
@@ -83,13 +83,15 @@ int main()
 int menu()
 {
 	int choice;
-	
+
 	printf("***MEMORY!***\n");
 	printf("1 - Play Game\n");
 	printf("2 - Check Scores\n");
 	printf("0 - EXIT\n");
-	
+
 	scanf("%d", &choice);
+
+	return choice;
 }
 
 int difficultySelect()
@@ -131,7 +133,7 @@ void game(int difficulty)
 	}
 }
 
-void outputnames(FILE*fp, char array[TOTAL_NAME][MAX_STR], int score[])
+void outputnames(FILE*fp, char array[][MAX_STR], int score[])
 {
 	FILE*output;
 	char temp;
@@ -168,7 +170,6 @@ void coordinate( int *x, int *y, int *a, int *b)
 		getcoord(a,b);
 		dup = duplicate(*x,*y,*a,*b);
 	}
-	
 }
 
 void getcoord(int *x, int *y)
