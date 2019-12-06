@@ -33,7 +33,8 @@ int main()
 	int finalscore;
 	char array[][MAX_STR];
 	
-	fp = fopen("scores.txt", "w");
+	fp = fopen("scores.txt", "r");
+	// NOTE: this only allows reading. we need to close the file after each operation that handles the file to read from top
 	
 	int x=0, y=0, a=0, b=0;
 
@@ -306,11 +307,9 @@ char random_symbol_generator(void)
 
 void displayScore(FILE *fp)
 {
-	
 	int counter = 0, indexName = 0, indexScore = 0;
 	int scoreboard[TOTAL_NAME];
 	char array[10][100];
-	char temp = '\0';
 
 	while(fscanf(fp, "%s %d\n", array[indexScore], &scoreboard[indexScore]) == 2)
 	{
@@ -318,9 +317,12 @@ void displayScore(FILE *fp)
 		indexScore++;
 	}
 
+	printf("**HIGH SCORES**\n");
 	for(int index = 0; index < counter; index++)
 	{
 		printf("%s: ", array[index]);
 		printf("%d\n", scoreboard[index]);
 	}
+
+	printf("\n");
 }
