@@ -61,27 +61,28 @@ int main()
 	
 	do
 	{
-		if((fopen("scores.txt", "r")) == NULL)
-		{
-			fp = fopen("scores.txt", "w");
-		}
-		else
-		{
-			fp = fopen("scores.txt", "a");
-		}
-		
 		choice = menu();
 
 		switch(choice)
 		{
 				// first case deals with games.
-			case 1:	difficulty = difficultySelect();
+			case 1:	if((fopen("scores.txt", "r")) == NULL)
+				{
+					fp = fopen("scores.txt", "w");
+				}
+				else
+				{
+					fp = fopen("scores.txt", "a");
+				}
+				difficulty = difficultySelect();
 				game(difficulty, &score);
+				fclose(fp);
 //				outputnames(fp, array, &score);
 				break;
 				
 				// second case deals with scoreboard display.
-			case 2:	displayScore(fp);
+			case 2:	fp = fopen("scores.txt", "r");
+				displayScore(fp);
 				fclose(fp);
 			//	scores();
 
@@ -91,8 +92,6 @@ int main()
 				// case 0 does nothing.
 			case 0:	break;
 		}
-		
-		fclose(fp);
 	}
 	while(choice != 0);
 	
