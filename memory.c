@@ -324,5 +324,569 @@ void displayScore(FILE *fp)
 		printf("%d\n", scoreboard[index]);
 	}
 
-	printf("\n");
+	printf("\n"//Del Myer, Project 9 (FINAL), TA Sara, group members: Ulysses & Ryan.
+//Create a basic, rudimentary game of memory. This will encompass evrything we have learned in class,
+//over the entire semester.
+//This verison of the game will incldue the extra credit option of making the matrix (game board) appear
+//each time an individual coordinate is entered by the user.
+
+//preprocessor directives and header files 
+#include <stdio.h>
+#include <string.h> //should try not to use
+#include <time.h>
+#include <stdlib.h>
+
+//define macro constants 
+
+//declare function prototypes
+int menu(void);
+
+int difficultySelect();
+
+void get_coordinates(int board_size, int row1, int column1, int row2, int column2);
+
+void prefill_board(int board_size, char game_board[][board_size + 1]);
+
+void fill_board_with_pairs(int difficulty, int board_size, char game_board[][board_size + 1]);
+
+void shuffle_game_board(int difficulty, int board_size, char game_board[][board_size + 1]);
+
+void blank_board( int board_size, char game_board[][board_size + 1]);
+
+void playing_game_board(int difficulty, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1]);
+
+void prefill_bool_board(int board_size, _Bool match_board[][board_size + 1]);
+
+_Bool mathces_made_board(int difficulty, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1], _Bool match_board[][board_size + 1]);
+
+int score(int score1, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1]);
+
+_Bool check_matches(int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1]);
+
+int random_number_generator(int board_size);
+
+char random_symbol_generator(void);
+
+//declare global variables
+//these are global so that they do not have to redeclared in a function
+//int row1 = 1, column1 = 1, row2 = 1, column2 = 1;
+
+//main function
+int main(void)
+{
+    //seed the "random" number generator with NULL
+    srand(time(NULL));
+
+    //declare local variables
+    int difficulty = 5, board_size = 10;
+    int row1 = 1, column1 = 1, row2 = 2, column2 = 2;
+
+    //testing out game board with pseudo board_size
+    difficulty = ((rand() % (3 - 1 + 1)) + 1);
+
+    //define board size as a variable of difficulty
+    board_size = (2 * difficulty);
+    int score1 = board_size;
+
+    //declare VLA, now that we have the difficulty, which determines the size of the game board
+    //(or 2D array), after adding 1 to properly shift the indices
+    char game_board[board_size][board_size + 1];
+    _Bool match_board[board_size][board_size + 1];
+
+    //TESTING
+    /*{BEGIN}
+    printf("random symbols check\n");
+    for(int index = 0; index < 5; index++)
+    {
+    for(int index1 = 0; index1 < 20; index1++)
+    {
+    printf("%c", random_symbol_generator());
+    }
+    printf("\n");
+    }
+
+    //define board size as a variable of difficulty
+    board_size = (2 * difficulty);
+    //prefill the game board with X's before the random characters, so we know which spots are taken
+    prefill_board (board_size, game_board);
+
+    printf("game board in prefill X's\n");
+                    for(int row_index = 0; row_index < board_size; row_index++)
+                    {
+                        for(int col_index = 0; col_index < board_size; col_index++)
+                        {
+                            printf("%c", game_board[row_index][col_index]);
+                        }   
+                        printf("\n");
+                    }
+                    printf("\n");
+
+    //fill the game board with pairs, in tandem
+    fill_board_with_pairs(difficulty, board_size, game_board);
+
+    //shuffle the board
+    shuffle_game_board(difficulty, board_size, game_board);
+                    printf("game board shuffled\n");
+                    for(int row_index = 0; row_index < board_size; row_index++)
+                    {
+                        for(int col_index = 0; col_index < board_size; col_index++)
+                        {
+                            printf("%c", game_board[row_index][col_index]);
+                        }   
+                        printf("\n");
+                    }
+                    printf("\n");
+    //{END}*/                
+    
+
+    //testing blank board
+    //playing_game_board(difficulty, row1, column1, row2, column2, board_size, game_board);
+
+    //prefill_bool_board(board_size, match_board);
+
+    //mathces_made_board(difficulty, row1, column1, row2, column2, board_size, game_board, match_board);
+
+    //START PROGRAM
+    do
+    {
+        //declare local variables
+        
+        //display menu
+        switch(menu())
+        {
+            case 1: difficulty = difficultySelect();
+            
+                    //define board size as a variable of difficulty
+                    board_size = (2 * difficulty);
+
+                    //prefill the game board with X's before the random characters, so we know which spots are taken
+                    prefill_board (board_size, game_board);
+
+                    //fill the game board with pairs, in tandem
+                    fill_board_with_pairs(difficulty, board_size, game_board);
+
+                    //shuffle the board
+                    shuffle_game_board(difficulty, board_size, game_board);
+                    
+                    //prefill matches board
+                    prefill_bool_board(board_size, match_board);
+                    
+                    //display blank playing board once, each time option 1 is chosen
+                    blank_board( board_size, game_board);
+
+                    //declare local variables;
+                    int won = 0;
+
+
+                    do
+                    {
+                
+                    //acquire user input
+                    get_coordinates(board_size, row1, column1, row2, column2);
+
+                    //display board with cards of selected coordinates
+                    playing_game_board(difficulty, row1, column1, row2, column2, board_size, game_board);
+
+                    //update score
+                    score( score1, row1, column1, row2, column2, board_size, game_board);
+
+                    won = mathces_made_board(difficulty, row1, column1, row2, column2, board_size, game_board, match_board);
+                    
+                    }while(!won);
+                    break;
+            case 2: break;
+            
+
+            case 0: //end program
+                    break;
+        }
+
+    } while(menu());
+
+    //end program
+    return 0;
+}
+
+//DEFINE FUNCTIONS
+
+int menu(void)
+{
+	int choice;
+
+	printf("***MEMORY!***\n");
+	printf("1 - Play Game\n");
+	printf("2 - Check Scores\n");
+	printf("0 - EXIT\n");
+
+	scanf("%d", &choice);
+
+	return choice;
+}
+
+int difficultySelect()
+{
+	int difficulty;
+	
+	printf("Enter difficulty (1, 2, or 3): ");
+	scanf("%d", &difficulty);
+    printf("\n");
+	
+	return difficulty;
+}
+
+void get_coordinates(int board_size, int row1, int column1, int row2, int column2)
+{
+    _Bool valid = 0;
+    //get 1st pair of coordinates
+    printf("Enter your coordinates from 1 to %d\n", board_size);
+    scanf("%d %d", &row1, &column1);
+
+    //check that they are valid
+    while(!valid)
+    {
+        if( ( ((row1 < 1) || (row1 > board_size)) || ((column1 < 1) || (column1 > board_size)) ) )
+        {
+            printf("Please enter valid coordinates between 1 and %d\n", board_size);
+            scanf("%d %d", &row1, &column1);
+        }
+        else
+        {
+            valid = 1;
+        }
+    }
+    valid = 0;
+    //return line for proper formating
+    printf("\n");
+
+    //get 2nd pair of coordinates
+    printf("Enter your coordinates from 1 to %d\n", board_size);
+    scanf("%d %d", &row2, &column2);
+
+    //check that they are valid
+    while(!valid)
+    {
+        if( ( ((row2 < 1) || (row2 > board_size)) || ((column2 < 1) || (column2 > board_size)) ) )
+        {
+            printf("Please enter valid coordinates between 1 and %d\n", board_size);
+            scanf("%d %d", &row2, &column2);
+        }
+        else
+        {
+            valid = 1;
+        }
+    }
+    valid = 0;
+    //return line for proper formating
+    printf("\n");
+
+    return;
+}
+
+//This function prefills the game board with X's, so that when it is filled with random characters, we know which
+//spots have already been taken.
+void prefill_board (int board_size, char game_board[][board_size + 1])
+{
+    int row_index = 0, col_index = 0;
+    for(row_index = 0; row_index < board_size; row_index++)
+    {
+        for(col_index = 0; col_index < board_size; col_index++)
+        {
+            game_board[row_index][col_index] = 'X';
+        } 
+        game_board[row_index][col_index] = '\0'; 
+    }
+    //end function
+    return;
+}
+
+//This function fills the game board with pairs of symbols, that do not repeat, in a linear fashion.
+void fill_board_with_pairs(int difficulty, int board_size, char game_board[][board_size + 1])
+{
+    //declare local variables
+    char pair_symbol = 'A';
+    _Bool duplicate_symbol = 0;
+    int number_of_symbols = (difficulty * board_size);
+    
+    //This is a 1d array that holds the symbols of the generated pairs and is used to check that each new pair
+    // is unique.
+    char symbol_check[number_of_symbols + 1];
+
+    //prefill symbol check with X's
+    int index = 0;
+    for(index = 0; index < (number_of_symbols); index++)
+    {
+        symbol_check[index] = 'X';
+    }
+    //last element assigned the NULL character
+    symbol_check[index] = '\0';
+
+    //new idea for assigning pairs of "randomly" generated symbols, in tandem order (must be shuffled)
+    //{BEGIN}
+    //check that each randomly generated symbol is not duplicated.
+    //generate a symbol until it is unique, and fill symbol array with them.
+    int symbol_index = 0;
+    pair_symbol = random_symbol_generator();
+    for(int index = 0; index < number_of_symbols; index++)
+    {
+        for(int index = 0; symbol_check[index] != '\0'; index++)
+        {
+            //printf("%c ", symbol_check[index]);
+            if(symbol_check[index] == pair_symbol)
+            {
+                pair_symbol = random_symbol_generator();
+                index = -1;
+            }
+        }
+            symbol_check[symbol_index] = pair_symbol;
+            symbol_index++;
+    }
+    
+    index = 0;
+    for(int row_index = 0; row_index < board_size; row_index++)
+    {
+        for(int col_index = 0; col_index < board_size; col_index++)
+        {
+            //assigne the unique symbol, in pairs to the game board array
+            game_board[row_index][col_index] = symbol_check[index];
+            //is safe to increment the column index, since the pairs are even and it stays within the bounds of the array
+            col_index++;
+            game_board[row_index][col_index] = symbol_check[index];
+            index++;
+        }   
+    }
+    //{END}
+
+    //controlling expressions for previous looping attempt below (commented out)
+    //int row = 0, column = 0, counter = 0;
+    //int number_pairs = (difficulty * board_size);
+    //_Bool pair = 1;       
+
+    //This should work, to fill the board with pairs and randomize them, and almost does; upon testing. Find out why is does not.
+    /*
+    do
+    {
+        row = random_number_generator(board_size - 1);
+        column = random_number_generator(board_size - 1);
+        printf("1\n");
+        if(game_board[row][column] == 'X')
+        {
+            printf("2\n");
+            game_board[row][column] = random_symbol_generator();
+            pair_symbol = game_board[row][column];
+            pair = 1;
+            while(pair)
+            {
+                printf("3\n");
+                row = random_number_generator(board_size - 1);
+                column = random_number_generator(board_size - 1);
+                if(game_board[row][column] == 'X')
+                {
+                    printf("4\n");
+                    game_board[row][column] = pair_symbol;
+                    pair = 0;
+                    counter++;
+                }
+            }
+        }
+        
+    } while(counter <= number_pairs);
+    */
+
+    return;
+}
+
+//This function shuffles the random characters, that were placed in the borad in linear pairs.
+void shuffle_game_board(int difficulty, int board_size, char game_board[][board_size + 1])
+{
+    int row = 0, column = 0;
+    char pair_symbol1  = 'A', pair_symbol2 = 'A';
+
+    //The outer loop performs repeated shuffles, for adequate randomness
+    for(int index = 0; index < 6; index++)
+        {
+            for(int row_index = 0; row_index < board_size; row_index++)
+            {
+                for(int col_index = 0; col_index < board_size; col_index++)
+                {
+                    pair_symbol1 = game_board[row_index][col_index];
+                    row = random_number_generator(board_size);
+                    column = random_number_generator(board_size);
+                    game_board[row_index][col_index] = game_board[row][column];
+                    game_board[row][column] = pair_symbol1;
+                }   
+            }
+        }
+    return;
+}
+
+void blank_board( int board_size, char game_board[][board_size + 1])
+{
+    for(int row_index = 0; row_index < board_size; row_index++)
+    {
+        for(int col_index = 0; col_index < board_size; col_index++)
+        {
+            printf("[ ]");
+        }   
+        printf("\n");
+    }
+}
+
+//Is passed user coordinates and displays cards as they are flipped and checks for matches. Passes mathces to mathces made board
+void playing_game_board(int difficulty, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1])
+{
+    //declare local variables
+    _Bool displayed1 = 0, displayed2 = 0;
+
+    //Display board, based on difficulty. Will initially be blank. This will display cards, as they are flipped and
+    //call the check matches funciton to check for matches.
+    for(int row_index = 0; row_index < board_size; row_index++)
+    {
+        for(int col_index = 0; col_index < board_size; col_index++)
+        {
+            if(!displayed1 && ( ((row1 - 1) + (column1 - 1)) == (row_index + col_index) ) )
+            {
+            
+                printf("[%c]", game_board[row_index][col_index]);
+                displayed1 = 1;
+            }
+            else if(!displayed2 && ( ((row2 - 1) + (column2 - 1)) == (row_index + col_index) ) )
+            {
+                printf("[%c]", game_board[row_index][col_index]);
+                displayed2 = 1;
+            }
+            else
+            {
+                printf("[ ]");
+            }
+        }
+        printf("\n");   
+    }
+    //reset flags back to zero 
+    displayed1 = 0;
+    displayed2 = 0;
+
+    if(check_matches(row1, column1, row2, column2, board_size, game_board))
+    {
+        printf("MATCHED!");
+        printf("\n");
+    }
+
+    return;
+}
+
+void prefill_bool_board(int board_size, _Bool match_board[][board_size + 1])
+{
+    int row_index = 0, col_index = 0;
+    for(row_index = 0; row_index < board_size; row_index++)
+    {
+        for(col_index = 0; col_index < board_size; col_index++)
+        {
+            match_board[row_index][col_index] = 0;
+        } 
+        match_board[row_index][col_index] = '\0'; 
+    }
+
+    return;
+}
+
+//Keeps track of which cards have been mathced, with bools. Returns won bool as true when the game is over.
+_Bool mathces_made_board(int difficulty, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1], _Bool match_board[][board_size + 1])
+
+{
+    int win_matches = 0, matches = 0;
+    _Bool match = 0;
+    win_matches = (difficulty * board_size);
+    
+    //Call check match to check of their is a match between the two coordiante pairs.
+    match = check_matches(row1, column1, row2, column2, board_size, game_board);
+
+    //If there is match, assign those locations on the bool board 1's and increment the number of matches made
+    if(match)
+    {
+        match_board[row1 - 1][column1 - 1] = 1;
+        match_board[row2 - 1][column2 - 1] = 1;
+        matches++;
+    }
+
+    //display matches made board
+    printf("\n");
+    for(int row_index = 0; row_index < board_size; row_index++)
+    {
+        for(int col_index = 0; col_index < board_size; col_index++)
+        {
+            if(match_board[row_index][col_index] == 1)
+            {
+                printf("[%c]", game_board[row_index][col_index]);
+            }
+            else
+            {
+                printf("[ ]");
+            }
+            
+        }   
+        printf("\n");
+    }
+
+    //game is won, end function
+    if(matches == win_matches)
+    {
+        return 1;
+    }
+
+    //game is not won, end function
+    return 0;
+}
+
+int score(int score1, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1])
+{
+    if(check_matches(row1, column1, row2, column2, board_size, game_board))
+    {
+        return score1;
+    }
+    else
+    {
+        score1--;
+    }
+    return score1;
+}
+
+_Bool check_matches(int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1])
+{
+    //declare local variables
+    _Bool match = 0;
+
+    //Check for matches. Subtract 1 from each of the coordinates to align them with the proper indices in the array.
+    if(game_board[row1 - 1][column1 - 1] == game_board[row2 - 1][column2 - 1])
+    {
+        //match made
+        match = 1;
+        return match;
+    }
+
+    //no match
+    return match;
+}
+
+//generates a random number between 1 and 3 (the difficulty levels)
+int random_number_generator(int board_size)
+{
+    //declare local variables
+    int number = 4;
+    
+    //use rand to make the number "random" within the range of the game board size
+    //(size of the indices of the 2D array) which is based on the difficulty level
+    number = ((rand() % ((board_size - 1) - 0 + 1)) + 0);
+    return number;
+}
+
+//generates a random symbol between @ and !
+char random_symbol_generator(void)
+{
+    //declare local variables
+    char symbol = 'A';
+    
+    //use rand to make the symbol "random" within the range of ! to @
+    symbol = ((rand() % ('@' - '!' + 1)) + '!');
+    return symbol;
+});
 }
