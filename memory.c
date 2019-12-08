@@ -13,7 +13,7 @@
 #define TOTAL_NAME 10
 
 void game(int difficulty, int *score1);
-void outputnames (FILE* fp, char array[][MAX_STR], int score[]);
+void outputnames(FILE* fp, char array[][MAX_STR], int score[]);
 int menu();
 int difficultySelect();
 void coordinate(int *x, int *y, int *a ,  int *b);
@@ -154,7 +154,6 @@ void game(int difficulty, int *score)
 
 	do
 	{
-                
 		//acquire user input
 		get_coordinates(board_size, row1, column1, row2, column2);
 
@@ -165,14 +164,14 @@ void game(int difficulty, int *score)
 		score(score1, row1, column1, row2, column2, board_size, game_board);
 
 		won = matches_made_board(difficulty, row1, column1, row2, column2, board_size, game_board, match_board);
-                    
 	}while(!won);
 }
 
-void outputnames(FILE*fp, char array[][MAX_STR], int score[])
+void outputnames(FILE *fp, char array[][MAX_STR], int score[])
 {
-	FILE*output;
+	FILE *output;
 	char temp;
+	
 	int i = 0, j = 0, counter = 0;
 
 		for (i; i< 15; i++)
