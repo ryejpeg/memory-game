@@ -21,15 +21,15 @@ void getcoord(int *x,int *y);
 _Bool duplicate(int x, int y, int a, int b);
 void displayScore(FILE *fp);
 
-void get_coordinates(int board_size, int row1, int column1, int row2, int column2);
+void get_coordinates(int board_size, int *row1, int *column1, int *row2, int *column2);
 void prefill_board(int board_size, char game_board[][board_size + 1]);
 void fill_board_with_pairs(int difficulty, int board_size, char game_board[][board_size + 1]);
 void shuffle_game_board(int difficulty, int board_size, char game_board[][board_size + 1]);
 void blank_board(int board_size, char game_board[][board_size + 1]);
-void playing_game_board(int difficulty, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1]);
+void playing_game_board(int difficulty, int *row1, int *column1, int *row2, int *column2, int board_size, char game_board[][board_size + 1]);
 void prefill_bool_board(int board_size, _Bool match_board[][board_size + 1]);
-_Bool matches_made_board(int difficulty, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1], _Bool match_board[][board_size + 1]);
-int score(int score1, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1]);
+_Bool matches_made_board(int difficulty, int *row1, int *column1, int *row2, int *column2, int board_size, char game_board[][board_size + 1], _Bool match_board[][board_size + 1], int win_matches, int *matches);
+int scoreGet(int *score1, int *row1, int *column1, int *row2, int *column2, int board_size, char game_board[][board_size + 1]);
 _Bool check_matches(int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1]);
 int random_number_generator(int board_size);
 char random_symbol_generator();
@@ -42,7 +42,7 @@ int main()
 	FILE *fp;
 	int choice, scoreboard[TOTAL_NAME], score = 0;
 	int finalscore;
-	char array[][MAX_STR];
+	char array[TOTAL_NAME][MAX_STR];
 	
 	//declare local variables
 	int board_size = 0, difficulty = -1;
@@ -61,13 +61,13 @@ int main()
 	
 	do
 	{
-		if(fopen("scores.txt", "r") != 1)
+		if((fopen("scores.txt", "r")) == NULL)
 		{
 			fp = fopen("scores.txt", "w");
 		}
 		else
 		{
-			fp = fopen("scores.txt", "r");
+			fp = fopen("scores.txt", "a");
 		}
 		
 		choice = menu();
@@ -77,12 +77,12 @@ int main()
 				// first case deals with games.
 			case 1:	difficulty = difficultySelect();
 				game(difficulty, &score);
-				outputnames(fp, array, &score);
+//				outputnames(fp, array, &score);
 				break;
 				
 				// second case deals with scoreboard display.
 			case 2:	displayScore(fp);
-				fclose(fp)
+				fclose(fp);
 			//	scores();
 
 
@@ -125,9 +125,10 @@ int difficultySelect()
 
 void game(int difficulty, int *score)
 {
+	int row1 = 1, column1 = 1, row2 = 2, column2 = 2;
 	//define board size as a variable of difficulty
 	int board_size = (2 * difficulty);
-	score = board_size;
+	*score = board_size;
 
 	//declare VLA, now that we have the difficulty, which determines the size of the game board
 	//(or 2D array), after adding 1 to properly shift the indices
@@ -150,21 +151,67 @@ void game(int difficulty, int *score)
 	blank_board( board_size, game_board);
 			   
 	//declare local variables;
-	int won = 0;
+	_Bool won = 0;
+	int win_matches = board_size, matches = 0;
 
 	do
 	{
 		//acquire user input
-		get_coordinates(board_size, row1, column1, row2, column2);
+		get_coordinates(board_size, &row1, &column1, &row2, &column2);
 
 		//display board with cards of selected coordinates
-		playing_game_board(difficulty, row1, column1, row2, column2, board_size, game_board);
+		playing_game_board(difficulty, &row1, &column1, &row2, &column2, board_size, game_board);
 
 		//update score
-		score(score1, row1, column1, row2, column2, board_size, game_board);
+		scoreGet(score, &row1, &column1, &row2, &column2, board_size, game_board);
 
-		won = matches_made_board(difficulty, row1, column1, row2, column2, board_size, game_board, match_board);
+		won = matches_made_board(difficulty, &row1, &column1, &row2, &column2, board_size, game_board, match_board, win_matches, &matches);
 	}while(!won);
+}
+
+//Keeps track of which cards have been mathced, with bools. Returns won bool as true when the game is over.
+_Bool matches_made_board(int difficulty, int *row1, int *column1, int *row2, int *column2, int board_size, char game_board[][board_size + 1], _Bool match_board[][board_size + 1], int win_matches, int *matches)
+{
+	_Bool match = 0;
+
+    //Call check match to check of their is a match between the two coordiante pairs.
+    match = check_matches(*row1, *column1, *row2, *column2, board_size, game_board);
+
+    //If there is match, assign those locations on the bool board 1's and increment the number of matches made
+    if(match)
+    {
+        match_board[*row1 - 1][*column1 - 1] = 1;
+        match_board[*row2 - 1][*column2 - 1] = 1;
+        *matches += 1;
+    }
+
+    //display matches made board
+    printf("\n");
+    for(int row_index = 0; row_index < board_size; row_index++)
+    {
+        for(int col_index = 0; col_index < board_size; col_index++)
+        {
+            if(match_board[row_index][col_index] == 1)
+            {
+                printf("[%c]", game_board[row_index][col_index]);
+            }
+            else
+            {
+                printf("[ ]");
+            }
+            
+        }   
+        printf("\n");
+    }
+
+    //game is won, end function
+    if(*matches == win_matches)
+    {
+        return 1;
+    }
+
+    //game is not won, end function
+    return 0;
 }
 
 void outputnames(FILE *fp, char array[][MAX_STR], int score[])
@@ -201,56 +248,49 @@ _Bool duplicate(int x, int y, int a, int b)
 	return 0;
 }
 
-
-
-// DEL'S NEW CODE TO BE CLEANED UP
-
-void get_coordinates(int board_size, int row1, int column1, int row2, int column2)
+void get_coordinates(int board_size, int *row1, int *column1, int *row2, int *column2)
 {
-    _Bool valid = 0;
-    //get 1st pair of coordinates
-    printf("Enter your coordinates from 1 to %d\n", board_size);
-    scanf("%d %d", &row1, &column1);
+	_Bool valid = 0;
+	//get 1st pair of coordinates
+	printf("Enter your coordinates from 1 to %d\n", board_size);
+	scanf("%d %d", row1, column1);
 
-    //check that they are valid
-    while(!valid)
-    {
-        if( ( ((row1 < 1) || (row1 > board_size)) || ((column1 < 1) || (column1 > board_size)) ) )
-        {
-            printf("Please enter valid coordinates between 1 and %d\n", board_size);
-            scanf("%d %d", &row1, &column1);
-        }
-        else
-        {
-            valid = 1;
-        }
-    }
-    valid = 0;
-    //return line for proper formating
-    printf("\n");
+	//check that they are valid
+	while(!valid)
+	{
+		if((((*row1 < 1) || (*row1 > board_size)) || ((*column1 < 1) || (*column1 > board_size)) ) )
+		{
+			printf("Please enter valid coordinates between 1 and %d\n", board_size);
+			scanf("%d %d", row1, column1);
+		}
+		else
+		{
+			valid = 1;
+		}
+	}
 
-    //get 2nd pair of coordinates
-    printf("Enter your coordinates from 1 to %d\n", board_size);
-    scanf("%d %d", &row2, &column2);
+	printf("\n");
 
-    //check that they are valid
-    while(!valid)
-    {
-        if( ( ((row2 < 1) || (row2 > board_size)) || ((column2 < 1) || (column2 > board_size)) ) )
-        {
-            printf("Please enter valid coordinates between 1 and %d\n", board_size);
-            scanf("%d %d", &row2, &column2);
-        }
-        else
-        {
-            valid = 1;
-        }
-    }
-    valid = 0;
-    //return line for proper formating
-    printf("\n");
+	//get 2nd pair of coordinates
+	printf("Enter your coordinates from 1 to %d\n", board_size);
+	scanf("%d %d", row2, column2);
 
-    return;
+	//check that they are valid
+	while(!valid)
+	{
+		if((((*row2 < 1) || (*row2 > board_size)) || ((*column2 < 1) || (*column2 > board_size)) ) )
+		{
+			printf("Please enter valid coordinates between 1 and %d\n", board_size);
+			scanf("%d %d", row2, column2);
+		}
+		else
+		{
+			valid = 1;
+		}
+	}
+
+	//return line for proper formating
+	printf("\n");
 }
 
 //This function prefills the game board with X's, so that when it is filled with random characters, we know which
@@ -352,35 +392,38 @@ void shuffle_game_board(int difficulty, int board_size, char game_board[][board_
 
 void blank_board( int board_size, char game_board[][board_size + 1])
 {
-    for(int row_index = 0; row_index < board_size; row_index++)
-    {
-        for(int col_index = 0; col_index < board_size; col_index++)
-        {
-            printf("[ ]");
-        }   
-        printf("\n");
-    }
+	for(int row_index = 0; row_index < board_size; row_index++)
+	{
+		for(int col_index = 0; col_index < board_size; col_index++)
+		{
+			printf("[ ]");
+		}   
+		printf("\n");
+	}
 }
 
 //Is passed user coordinates and displays cards as they are flipped and checks for matches. Passes mathces to mathces made board
-void playing_game_board(int difficulty, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1])
+void playing_game_board(int difficulty, int *row1, int *column1, int *row2, int *column2, int board_size, char game_board[][board_size + 1])
 {
     //declare local variables
     _Bool displayed1 = 0, displayed2 = 0;
 
-    //Display board, based on difficulty. Will initially be blank. This will display cards, as they are flipped and
-    //call the check matches funciton to check for matches.
+/* 
+Display board, based on difficulty. Will initially be blank. This will display cards, as they are flipped and
+call the check matches funciton to check for matches.
+*/
+
     for(int row_index = 0; row_index < board_size; row_index++)
     {
         for(int col_index = 0; col_index < board_size; col_index++)
         {
-            if(!displayed1 && ( ((row1 - 1) + (column1 - 1)) == (row_index + col_index) ) )
+            if(!displayed1 && ((*row1 - 1) == row_index) && ((*column1 - 1) == col_index))
             {
             
                 printf("[%c]", game_board[row_index][col_index]);
                 displayed1 = 1;
             }
-            else if(!displayed2 && ( ((row2 - 1) + (column2 - 1)) == (row_index + col_index) ) )
+            else if(!displayed2 && ((*row2 - 1) == row_index) && ((*column2 - 1) == col_index))
             {
                 printf("[%c]", game_board[row_index][col_index]);
                 displayed2 = 1;
@@ -396,7 +439,7 @@ void playing_game_board(int difficulty, int row1, int column1, int row2, int col
     displayed1 = 0;
     displayed2 = 0;
 
-    if(check_matches(row1, column1, row2, column2, board_size, game_board))
+    if(check_matches(*row1, *column1, *row2, *column2, board_size, game_board))
     {
         printf("MATCHED!");
         printf("\n");
@@ -420,22 +463,25 @@ void prefill_bool_board(int board_size, _Bool match_board[][board_size + 1])
     return;
 }
 
+
+/*
 //Keeps track of which cards have been mathced, with bools. Returns won bool as true when the game is over.
-_Bool matches_made_board(int difficulty, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1], _Bool match_board[][board_size + 1])
+_Bool matches_made_board(int difficulty, int *row1, int *column1, int *row2, int *column2, int board_size, char game_board[][board_size + 1], _Bool match_board[][board_size + 1])
 
 {
     int win_matches = 0, matches = 0;
     _Bool match = 0;
-    win_matches = (difficulty * board_size);
+    win_matches = (board_size);
     
     //Call check match to check of their is a match between the two coordiante pairs.
-    match = check_matches(row1, column1, row2, column2, board_size, game_board);
+    match = check_matches(*row1, *column1, *row2, *column2, board_size, game_board);
+
 
     //If there is match, assign those locations on the bool board 1's and increment the number of matches made
     if(match)
     {
-        match_board[row1 - 1][column1 - 1] = 1;
-        match_board[row2 - 1][column2 - 1] = 1;
+        match_board[*row1 - 1][*column1 - 1] = 1;
+        match_board[*row2 - 1][*column2 - 1] = 1;
         matches++;
     }
 
@@ -467,18 +513,19 @@ _Bool matches_made_board(int difficulty, int row1, int column1, int row2, int co
     //game is not won, end function
     return 0;
 }
+*/
 
-int score(int score1, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1])
+int scoreGet(int *score1, int *row1, int *column1, int *row2, int *column2, int board_size, char game_board[][board_size + 1])
 {
-    if(check_matches(row1, column1, row2, column2, board_size, game_board))
+    if(check_matches(*row1, *column1, *row2, *column2, board_size, game_board))
     {
-        return score1;
+        return *score1;
     }
     else
     {
         score1--;
     }
-    return score1;
+    return *score1;
 }
 
 _Bool check_matches(int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1])
