@@ -19,12 +19,20 @@ int difficultySelect();
 void coordinate(int *x, int *y, int *a ,  int *b);
 void getcoord(int *x,int *y);
 _Bool duplicate(int x, int y, int a, int b);
-void prefill_board(int board_size, char game_board[board_size][board_size]);
-void fill_board_with_pairs(int difficulty, int board_size, char game_board[board_size][board_size]);
-void shuffle_game_board(int difficulty, int board_size, char game_board[board_size][board_size]);
-int random_number_generator(int board_size);
-char random_symbol_generator(void);
 void displayScore(FILE *fp);
+
+void get_coordinates(int board_size, int row1, int column1, int row2, int column2);
+void prefill_board(int board_size, char game_board[][board_size + 1]);
+void fill_board_with_pairs(int difficulty, int board_size, char game_board[][board_size + 1]);
+void shuffle_game_board(int difficulty, int board_size, char game_board[][board_size + 1]);
+void blank_board(int board_size, char game_board[][board_size + 1]);
+void playing_game_board(int difficulty, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1]);
+void prefill_bool_board(int board_size, _Bool match_board[][board_size + 1]);
+_Bool matches_made_board(int difficulty, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1], _Bool match_board[][board_size + 1]);
+int score(int score1, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1]);
+_Bool check_matches(int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1]);
+int random_number_generator(int board_size);
+char random_symbol_generator();
 
 int main()
 {
@@ -39,14 +47,6 @@ int main()
 	//declare local variables
 	int board_size = 0, difficulty = -1;
 	
-	if(fopen("scores.txt", "r") != 1)
-	{
-		fp = fopen("scores.txt", "w");
-	}
-	else
-	{
-		fp = fopen("scores.txt", "r");
-	}
 	// NOTE: the previous only allows reading. we need to close the file after each operation that handles the file to read from top
 	
 	int row1 = 1, column1 = 1, row2 = 2, column2 = 2;
@@ -58,8 +58,18 @@ int main()
 		scoreboard[index] = -1;
 	}
 	
+	
 	do
 	{
+		if(fopen("scores.txt", "r") != 1)
+		{
+			fp = fopen("scores.txt", "w");
+		}
+		else
+		{
+			fp = fopen("scores.txt", "r");
+		}
+		
 		choice = menu();
 
 		switch(choice)
@@ -71,7 +81,8 @@ int main()
 				break;
 				
 				// second case deals with scoreboard display.
-			case 2:	
+			case 2:	displayScore(fp);
+				fclose(fp)
 			//	scores();
 
 
@@ -80,11 +91,10 @@ int main()
 				// case 0 does nothing.
 			case 0:	break;
 		}
+		
+		fclose(fp);
 	}
 	while(choice != 0);
-
-	
-	fclose(fp);
 	
 	return 0;
 }
@@ -152,9 +162,9 @@ void game(int difficulty, int *score)
 		playing_game_board(difficulty, row1, column1, row2, column2, board_size, game_board);
 
 		//update score
-		score( score1, row1, column1, row2, column2, board_size, game_board);
+		score(score1, row1, column1, row2, column2, board_size, game_board);
 
-		won = mathces_made_board(difficulty, row1, column1, row2, column2, board_size, game_board, match_board);
+		won = matches_made_board(difficulty, row1, column1, row2, column2, board_size, game_board, match_board);
                     
 	}while(!won);
 }
@@ -183,28 +193,6 @@ void outputnames(FILE*fp, char array[][MAX_STR], int score[])
 
 }
 
-void coordinate( int *x, int *y, int *a, int *b)
-{
-	_Bool dup = 0;
-
-	getcoord(x,y);
-	getcoord(a,b);
-	dup = duplicate(*x,*y,*a,*b);
-	while(dup)
-	{
-		printf("Duplicate\n");
-		getcoord(a,b);
-		dup = duplicate(*x,*y,*a,*b);
-	}
-}
-
-void getcoord(int *x, int *y)
-{
-	printf("Enter your coordinates\n");
-	scanf("%d\t%d",x,y);
-}
-
-
 _Bool duplicate(int x, int y, int a, int b)
 {
 	if(x ==a && y==b)
@@ -214,166 +202,9 @@ _Bool duplicate(int x, int y, int a, int b)
 	return 0;
 }
 
-//declare global variables
 
-//define functions
-void prefill_board (int board_size, char game_board[board_size][board_size])
-{
-	for(int row_index = 0; row_index < board_size; row_index++)
-	{
-		for(int col_index = 0; col_index < board_size; col_index++)
-		{
-			game_board[row_index][col_index] = 'X';
-		}   
-	}
 
-	//end function
-}
-
-void fill_board_with_pairs(int difficulty, int board_size, char game_board[board_size][board_size])
-{
-	// declare local variables
-	int row = 0, column = 0, number_pairs = 0, counter = 0;
-	char pair_symbol = 'A';
-	_Bool pair = 1;
-    
-	// controlling expression for previous looping attempt below (commented out)
-	// number_pairs = (difficulty * board_size);
-
-	// new idea for assigning pairs of "randomly" generated symbols, in tandem order (must be shuffled)
-	for(int row_index = 0; row_index < board_size; row_index++)
-	{
-		for(int col_index = 0; col_index < board_size; col_index++)
-		{
-			game_board[row_index][col_index] = random_symbol_generator();
-			pair_symbol = game_board[row_index][col_index];
-			col_index++;
-			game_board[row_index][col_index] = pair_symbol;
-		}
-	}
-
-	//This should work, and almost does; upon testing. Find out why is does not.
-	/*
-	do
-	{
-		row = random_number_generator(board_size - 1);
-		column = random_number_generator(board_size - 1);
-		printf("1\n");
-		if(game_board[row][column] == 'X')
-		{
-			printf("2\n");
-			game_board[row][column] = random_symbol_generator();
-			pair_symbol = game_board[row][column];
-			pair = 1;
-			while(pair)
-			{
-				printf("3\n");
-				row = random_number_generator(board_size - 1);
-				column = random_number_generator(board_size - 1);
-				if(game_board[row][column] == 'X')
-				{
-					printf("4\n");
-					game_board[row][column] = pair_symbol;
-					pair = 0;
-					counter++;
-				}
-			}
-		}
-	}while(counter <= number_pairs);
-    */
-}
-
-void shuffle_game_board(int difficulty, int board_size, char game_board[board_size][board_size])
-{
-	int row = 0, column = 0;
-	char pair_symbol1  = 'A', pair_symbol2 = 'A';
-
-	for(int index = 0; index < 3; index++)
-	{
-		for(int row_index = 0; row_index < board_size; row_index++)
-		{
-			for(int col_index = 0; col_index < board_size; col_index++)
-			{
-				pair_symbol1 = game_board[row_index][col_index];
-				row = random_number_generator(board_size);
-				column = random_number_generator(board_size);
-				game_board[row_index][col_index] = game_board[row][column];
-				game_board[row][column] = pair_symbol1;
-			}
-		}
-	}
-}
-
-int random_number_generator(int board_size)
-{
-	//declare local variables
-	int number = 3;
-
-	//use rand to make the number "random" within the range of the game board size
-	//(size of the indices of the 2D array) which is based on the difficulty level
-	number = ((rand() % ((board_size - 1) - 0 + 1)) + 0);
-
-	return number;
-}
-
-char random_symbol_generator(void)
-{
-	//declare local variables
-	char symbol = 'A';
-
-	//use rand to make the symbol "random" within the range of ! to @
-	symbol = ((rand() % ('@' - '!' + 1)) + '!');
-
-	return symbol;
-}
-
-void displayScore(FILE *fp)
-{
-	int counter = 0, indexName = 0, indexScore = 0;
-	int scoreboard[TOTAL_NAME];
-	char array[10][100];
-
-	while(fscanf(fp, "%s %d\n", array[indexScore], &scoreboard[indexScore]) == 2)
-	{
-		counter++;
-		indexScore++;
-	}
-
-	printf("**HIGH SCORES**\n");
-	for(int index = 0; index < counter; index++)
-	{
-		printf("%s: ", array[index]);
-		printf("%d\n", scoreboard[index]);
-	}
-
-	printf("\n");
-
-//DEFINE FUNCTIONS
-
-int menu(void)
-{
-	int choice;
-
-	printf("***MEMORY!***\n");
-	printf("1 - Play Game\n");
-	printf("2 - Check Scores\n");
-	printf("0 - EXIT\n");
-
-	scanf("%d", &choice);
-
-	return choice;
-}
-
-int difficultySelect()
-{
-	int difficulty;
-	
-	printf("Enter difficulty (1, 2, or 3): ");
-	scanf("%d", &difficulty);
-    printf("\n");
-	
-	return difficulty;
-}
+// DEL'S NEW CODE TO BE CLEANED UP
 
 void get_coordinates(int board_size, int row1, int column1, int row2, int column2)
 {
@@ -495,69 +326,29 @@ void fill_board_with_pairs(int difficulty, int board_size, char game_board[][boa
             index++;
         }   
     }
-    //{END}
-
-    //controlling expressions for previous looping attempt below (commented out)
-    //int row = 0, column = 0, counter = 0;
-    //int number_pairs = (difficulty * board_size);
-    //_Bool pair = 1;       
-
-    //This should work, to fill the board with pairs and randomize them, and almost does; upon testing. Find out why is does not.
-    /*
-    do
-    {
-        row = random_number_generator(board_size - 1);
-        column = random_number_generator(board_size - 1);
-        printf("1\n");
-        if(game_board[row][column] == 'X')
-        {
-            printf("2\n");
-            game_board[row][column] = random_symbol_generator();
-            pair_symbol = game_board[row][column];
-            pair = 1;
-            while(pair)
-            {
-                printf("3\n");
-                row = random_number_generator(board_size - 1);
-                column = random_number_generator(board_size - 1);
-                if(game_board[row][column] == 'X')
-                {
-                    printf("4\n");
-                    game_board[row][column] = pair_symbol;
-                    pair = 0;
-                    counter++;
-                }
-            }
-        }
-        
-    } while(counter <= number_pairs);
-    */
-
-    return;
 }
 
 //This function shuffles the random characters, that were placed in the borad in linear pairs.
 void shuffle_game_board(int difficulty, int board_size, char game_board[][board_size + 1])
 {
-    int row = 0, column = 0;
-    char pair_symbol1  = 'A', pair_symbol2 = 'A';
+	int row = 0, column = 0;
+	char pair_symbol1  = 'A', pair_symbol2 = 'A';
 
-    //The outer loop performs repeated shuffles, for adequate randomness
-    for(int index = 0; index < 6; index++)
-        {
-            for(int row_index = 0; row_index < board_size; row_index++)
-            {
-                for(int col_index = 0; col_index < board_size; col_index++)
-                {
-                    pair_symbol1 = game_board[row_index][col_index];
-                    row = random_number_generator(board_size);
-                    column = random_number_generator(board_size);
-                    game_board[row_index][col_index] = game_board[row][column];
-                    game_board[row][column] = pair_symbol1;
-                }   
-            }
-        }
-    return;
+	//The outer loop performs repeated shuffles, for adequate randomness
+	for(int index = 0; index < 6; index++)
+	{
+		for(int row_index = 0; row_index < board_size; row_index++)
+		{
+			for(int col_index = 0; col_index < board_size; col_index++)
+			{
+				pair_symbol1 = game_board[row_index][col_index];
+				row = random_number_generator(board_size);
+				column = random_number_generator(board_size);
+				game_board[row_index][col_index] = game_board[row][column];
+				game_board[row][column] = pair_symbol1;
+			}   
+		}
+	}
 }
 
 void blank_board( int board_size, char game_board[][board_size + 1])
@@ -631,7 +422,7 @@ void prefill_bool_board(int board_size, _Bool match_board[][board_size + 1])
 }
 
 //Keeps track of which cards have been mathced, with bools. Returns won bool as true when the game is over.
-_Bool mathces_made_board(int difficulty, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1], _Bool match_board[][board_size + 1])
+_Bool matches_made_board(int difficulty, int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1], _Bool match_board[][board_size + 1])
 
 {
     int win_matches = 0, matches = 0;
@@ -729,5 +520,36 @@ char random_symbol_generator(void)
     //use rand to make the symbol "random" within the range of ! to @
     symbol = ((rand() % ('@' - '!' + 1)) + '!');
     return symbol;
-});
 }
+
+// ******
+// DO NOT MODIFY WITHOUT TELLING RYAN
+// SCOREKEEPING or SCORE.TXT FILE HANDLING BEGIN
+// ******
+
+void displayScore(FILE *fp)
+{
+	int counter = 0, indexName = 0, indexScore = 0;
+	int scoreboard[TOTAL_NAME];
+	char array[10][100];
+
+	while(fscanf(fp, "%s %d\n", array[indexScore], &scoreboard[indexScore]) == 2)
+	{
+		counter++;
+		indexScore++;
+	}
+
+	printf("**HIGH SCORES**\n");
+	for(int index = 0; index < counter; index++)
+	{
+		printf("%s: ", array[index]);
+		printf("%d\n", scoreboard[index]);
+	}
+
+	printf("\n");
+}
+
+// ******
+// DO NOT MODIFY WITHOUT TELLING RYAN
+// SCOREKEEPING or SCORE.TXT FILE HANDLING END
+// ******
