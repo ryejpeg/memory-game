@@ -12,7 +12,7 @@
 #define MAX_NAME 15
 #define TOTAL_NAME 10
 
-void game(int difficulty, int *score1);
+void game(int difficulty, int *score1, char name[MAX_STR]);
 void outputnames(FILE* fp, char array[][MAX_STR], int score[]);
 int menu();
 int difficultySelect();
@@ -34,6 +34,9 @@ _Bool check_matches(int row1, int column1, int row2, int column2, int board_size
 int random_number_generator(int board_size);
 char random_symbol_generator();
 
+void scoreToFile(FILE *fp, int score, char nameWinner[MAX_STR], char open_status);
+void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAMES], char arrayNames[TOTAL_NAMES][MAX_STR]);
+
 int main()
 {
 	//seed the "random" number generator with NULL
@@ -41,8 +44,8 @@ int main()
 	
 	FILE *fp;
 	int choice, scoreboard[TOTAL_NAME], score = 0;
-	int finalscore;
-	char array[TOTAL_NAME][MAX_STR];
+	char open_status;
+	char nameWinner[MAX_STR];
 	
 	//declare local variables
 	int board_size = 0, difficulty = -1;
@@ -65,32 +68,35 @@ int main()
 
 		switch(choice)
 		{
-				// first case deals with games.
-			case 1:	if((fopen("scores.txt", "r")) == NULL)
+			case 1:	// first case deals with games.
+
+				if((fopen("scores.txt", "r")) == NULL)
 				{
 					fp = fopen("scores.txt", "w");
+					open_status = 'w';
 				}
 				else
 				{
-					fp = fopen("scores.txt", "a");
+					fp = fopen("scores.txt", "r");
+					open_status = 'r';
 				}
 				difficulty = difficultySelect();
-				game(difficulty, &score);
+				game(difficulty, &score, nameWinner);
+//				scoreToFile(fp, score, nameWinner, open_status);
 				fclose(fp);
 //				outputnames(fp, array, &score);
 				break;
 				
-				// second case deals with scoreboard display.
-			case 2:	fp = fopen("scores.txt", "r");
+			case 2:	// second case deals with scoreboard display.
+
+				fp = fopen("scores.txt", "r");
 				displayScore(fp);
 				fclose(fp);
-			//	scores();
-
-
 				break;
 				
-				// case 0 does nothing.
-			case 0:	break;
+			case 0:	// case 0 does nothing.
+
+				break;
 		}
 	}
 	while(choice != 0);
@@ -122,12 +128,12 @@ int difficultySelect()
 	return difficulty;
 }
 
-void game(int difficulty, int *score)
+void game(int difficulty, int *score, char name[MAX_STR])
 {
 	int row1 = 1, column1 = 1, row2 = 2, column2 = 2;
 	//define board size as a variable of difficulty
 	int board_size = (2 * difficulty);
-	*score = board_size;
+	*score = (board_size * 2);
 
 	//declare VLA, now that we have the difficulty, which determines the size of the game board
 	//(or 2D array), after adding 1 to properly shift the indices
@@ -147,11 +153,11 @@ void game(int difficulty, int *score)
 	prefill_bool_board(board_size, match_board);
                     
 	//display blank playing board once, each time option 1 is chosen
-	blank_board( board_size, game_board);
+	blank_board(board_size, game_board);
 			   
 	//declare local variables;
 	_Bool won = 0;
-	int win_matches = board_size, matches = 0;
+	int win_matches = board_size, matches = 0, scoreSaveUser;
 
 	do
 	{
@@ -166,6 +172,20 @@ void game(int difficulty, int *score)
 
 		won = matches_made_board(difficulty, &row1, &column1, &row2, &column2, board_size, game_board, match_board, win_matches, &matches);
 	}while(!won);
+
+	if(won)
+	{
+		printf("YOU WON!!!\n");
+		printf("%d points!\n", *score);
+		printf("Save score? 1 - yes: ");
+		scanf("%d", &scoreSaveUser);
+
+		if(scoreSaveUser == 1)
+		{
+			printf("Enter your name: ");
+			scanf("%s", name);
+		}
+	}
 }
 
 //Keeps track of which cards have been mathced, with bools. Returns won bool as true when the game is over.
@@ -514,17 +534,16 @@ _Bool matches_made_board(int difficulty, int *row1, int *column1, int *row2, int
 }
 */
 
-int scoreGet(int *score1, int *row1, int *column1, int *row2, int *column2, int board_size, char game_board[][board_size + 1])
+int scoreGet(int *score, int *row1, int *column1, int *row2, int *column2, int board_size, char game_board[][board_size + 1])
 {
     if(check_matches(*row1, *column1, *row2, *column2, board_size, game_board))
     {
-        return *score1;
+        return *score;
     }
     else
     {
-        score1--;
+        return (*score -= 1);
     }
-    return *score1;
 }
 
 _Bool check_matches(int row1, int column1, int row2, int column2, int board_size, char game_board[][board_size + 1])
@@ -593,6 +612,59 @@ void displayScore(FILE *fp)
 
 	printf("\n");
 }
+
+/*
+void scoreToFile(FILE *fp, int score, char name[MAX_STR], char open_status)
+{
+	char arrayNames[TOTAL_NAMES][MAX_STR]
+	int scoreboard[TOTAL_NAMES];
+
+	if(open_status == 'r')
+	{
+		scoreSort(fp, name, score, scoreboard, arrayNames);
+	}
+
+	fclose(fp);
+	fp = fopen("scores.txt", "a");
+	while(fprintf(fp, "%s %d\n", arrayNames[tempIndex], &scoreboard[tempIndex] == 2));
+	{
+		tempIndex++;
+	}
+}
+
+void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAMES], char arrayNames[TOTAL_NAMES][MAX_STR])
+{
+	int scoreTotal, scoreStore, tempIndex; counter;
+	char nameStore[TOTAL_NAME][MAX_STR];
+
+	// Check how many scores there are ('counter' variable):
+	tempIndex = 0;
+	counter = 0;
+	while(fscanf(fp, "%s %d\n", array[tempIndex], &scoreboard[tempIndex]) == 2)
+	{
+		counter++;
+		tempIndex++;
+	}
+
+	// SORTING
+	if(scoreboard[0] < 0)
+	{
+		scoreboard[0] = scoreNew;
+	}
+	else if((counter < 10) && (scoreNew < scoreboard[counter - 1])
+	{
+		scoreboard[counter] = scoreNew;
+	}
+	else if((counter == 10) && (scoreNew > scoreboard[counter - 1]
+	{
+	 	for(int index = 0; index < 10; index++) 
+		{
+			if
+		}
+	}
+
+}
+*/
 
 // ******
 // DO NOT MODIFY WITHOUT TELLING RYAN
