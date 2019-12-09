@@ -34,8 +34,8 @@ _Bool check_matches(int row1, int column1, int row2, int column2, int board_size
 int random_number_generator(int board_size);
 char random_symbol_generator();
 
-void scoreToFile(FILE *fp, int score, char nameWinner[MAX_STR], char open_status);
-void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAMES], char arrayNames[TOTAL_NAMES][MAX_STR]);
+void scoreToFile(FILE *fp, int score, char nameWinner[MAX_STR], char open_status, int scoreboard[TOTAL_NAME]);
+void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char arrayNames[TOTAL_NAME][MAX_STR]);
 
 int main()
 {
@@ -70,6 +70,9 @@ int main()
 		{
 			case 1:	// first case deals with games.
 
+				difficulty = difficultySelect();
+				game(difficulty, &score, nameWinner);
+
 				if((fopen("scores.txt", "r")) == NULL)
 				{
 					fp = fopen("scores.txt", "w");
@@ -80,9 +83,7 @@ int main()
 					fp = fopen("scores.txt", "r");
 					open_status = 'r';
 				}
-				difficulty = difficultySelect();
-				game(difficulty, &score, nameWinner);
-//				scoreToFile(fp, score, nameWinner, open_status);
+//				scoreToFile(fp, score, nameWinner, open_status, scoreboard);
 				fclose(fp);
 //				outputnames(fp, array, &score);
 				break;
@@ -141,7 +142,7 @@ void game(int difficulty, int *score, char name[MAX_STR])
 	_Bool match_board[board_size][board_size + 1];
 	
 	//prefill the game board with X's before the random characters, so we know which spots are taken
-	prefill_board (board_size, game_board);
+	prefill_board(board_size, game_board);
 
 	//fill the game board with pairs, in tandem
 	fill_board_with_pairs(difficulty, board_size, game_board);
@@ -287,6 +288,7 @@ void get_coordinates(int board_size, int *row1, int *column1, int *row2, int *co
 			valid = 1;
 		}
 	}
+	valid = 0;
 
 	printf("\n");
 
@@ -612,29 +614,41 @@ void displayScore(FILE *fp)
 
 	printf("\n");
 }
-
 /*
-void scoreToFile(FILE *fp, int score, char name[MAX_STR], char open_status)
+void scoreToFile(FILE *fp, int score, char name[MAX_STR], char open_status, int scoreboard[TOTAL_NAME])
 {
-	char arrayNames[TOTAL_NAMES][MAX_STR]
-	int scoreboard[TOTAL_NAMES];
+	char arrayNames[TOTAL_NAME][MAX_STR];
+	int tempIndex = 0, iteration = 0, counter = 0;
 
 	if(open_status == 'r')
 	{
 		scoreSort(fp, name, score, scoreboard, arrayNames);
 	}
+	else
+	{
+		while(fscanf(fp, "%s %d\n", arrayNames[tempIndex], &scoreboard[tempIndex]) == 2)
+		{
+			counter++;
+			tempIndex++;
+			printf("\nCOUNTING (scoreToFile): %d\n", counter);
+		}
+	}
 
 	fclose(fp);
 	fp = fopen("scores.txt", "a");
-	while(fprintf(fp, "%s %d\n", arrayNames[tempIndex], &scoreboard[tempIndex] == 2));
+
+	while(iteration != 9);
 	{
+		(fprintf(fp, "%s %d\n", arrayNames[tempIndex], scoreboard[tempIndex]));
 		tempIndex++;
+		iteration++;
+		printf("\nITERATING (scoreToFile): %d\n", counter);
 	}
 }
 
-void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAMES], char arrayNames[TOTAL_NAMES][MAX_STR])
+void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char array[TOTAL_NAME][MAX_STR])
 {
-	int scoreTotal, scoreStore, tempIndex; counter;
+	int scoreTotal, scoreStore, tempIndex, counter;
 	char nameStore[TOTAL_NAME][MAX_STR];
 
 	// Check how many scores there are ('counter' variable):
@@ -644,8 +658,13 @@ void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_
 	{
 		counter++;
 		tempIndex++;
+		printf("%s: ", array[tempIndex]);
+		printf("%d\n", scoreboard[tempIndex]);
+		printf("\nCOUNTING (scoreSort): %d\n", counter);
 	}
 
+
+/*
 	// SORTING
 	if(scoreboard[0] < 0)
 	{
@@ -662,10 +681,17 @@ void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_
 			if
 		}
 	}
-
-}
 */
 
+//}
+
+/*
+	for(int index = 0; index < counter; counter++)
+	{
+		strcpy(nameStore[index], array[index]);
+		printf("\nORIGINAL: %s\nCOPY: %s\n\n", array[index], nameStore[index]);
+	}
+*/
 // ******
 // DO NOT MODIFY WITHOUT TELLING RYAN
 // SCOREKEEPING or SCORE.TXT FILE HANDLING END
