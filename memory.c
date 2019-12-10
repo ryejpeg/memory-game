@@ -35,7 +35,7 @@ int random_number_generator(int board_size);
 char random_symbol_generator();
 
 void scoreToFile(FILE *fp, int score, char nameWinner[MAX_STR], char open_status);
-void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char arrayNames[][MAX_STR]);
+void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char namesAll[][MAX_STR], int counter);
 
 int main()
 {
@@ -629,20 +629,19 @@ void scoreToFile(FILE *fp, int score, char name[MAX_STR], char open_status)
 		scoreboard[index] = -1;
 	}
 
-	while(fscanf(fp, "%s %d\n", arrayNames[tempIndex], &scoreboard[tempIndex]) == 2)
+	if(open_status == 'r')
 	{
-		counter++;
-		tempIndex++;
-		printf("%s: ", arrayNames[tempIndex]);
-		printf("%d\n", scoreboard[tempIndex]);
-		printf("\nCOUNTING (scoreToFile status'r'): %d\n", counter);
-	}
+		while(fscanf(fp, "%s %d\n", arrayNames[tempIndex], &scoreboard[tempIndex]) == 2)
+		{
+			counter++;
+			tempIndex++;
+		}
 		
-	fclose(fp);
-	fp = fopen("scores.txt", "a");
-
-	
-	if(open_status == 'w')
+		scoreSort(fp, name, score, scoreboard, arrayNames, counter);
+		fclose(fp);
+		fp = fopen("scores.txt", "a");
+	}
+	else
 	{
 		while(fscanf(fp, "%s %d", arrayNames[tempIndex], &scoreboard[tempIndex]) == 2)
 		{
@@ -660,21 +659,14 @@ void scoreToFile(FILE *fp, int score, char name[MAX_STR], char open_status)
 		printf("\nITERATING (scoreToFile): %d\n", counter);
 	}*/
 }
-void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char array[][MAX_STR])
+
+void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char namesAll[][MAX_STR], int counter)
 {
-	int scoreTotal, scoreStore, tempIndex, counter;
+	int scoreTotal, scoreStore, tempIndex;
 	char nameStore[TOTAL_NAME][MAX_STR];
-	// Check how many scores there are ('counter' variable):
-	tempIndex = 0;
-	counter = 0;
-	while(fscanf(fp, "%s %d", array[tempIndex], &scoreboard[tempIndex]) == 2)
-	{
-		counter++;
-		tempIndex++;
-		printf("%s: ", array[tempIndex]);
-		printf("%d\n", scoreboard[tempIndex]);
-		printf("\nCOUNTING (scoreSort): %d\n", counter);
-	}
+	// Check how many scores there are ('counter' variable)
+	printf("\n\n\n%d TOTAL NAMES\n\n\n", counter);
+
 /*
 	// SORTING
 	if(scoreboard[0] < 0)
