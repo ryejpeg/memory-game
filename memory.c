@@ -684,13 +684,13 @@ void scoreSort(FILE *fp, char nameNew[MAX_STR], int scoreNew, int scoreboard[TOT
 		strcpy(tempName, nameNew);
 
 		// if the new score is higher than the lowest score already on scoreboard
-		if(tempScore > scoreboard[index])
+		if(tempScore > scoreboard[9])
 		{
 			// sort score number first
-			scoreboard[index] = tempScore;
+			scoreboard[9] = tempScore;
 
 			// sort name with score second
-			strcpy(namesAll[index], tempName);
+			strcpy(namesAll[9], tempName);
 
 			do
 			{
