@@ -52,9 +52,6 @@ int main()
 	// NOTE: the previous only allows reading. we need to close the file after each operation that handles the file to read from top
 	
 	int row1 = 1, column1 = 1, row2 = 2, column2 = 2;
-
-
-	
 	
 	do
 	{
@@ -121,9 +118,15 @@ int menu()
 int difficultySelect()
 {
 	int difficulty;
-	
+
 	printf("Enter difficulty (1, 2, or 3): ");
 	scanf("%d", &difficulty);
+
+	while((difficulty < 1) || (difficulty > 3))
+	{
+		printf("Enter a difficulty between 1 and 3:\n");
+		scanf("%d", &difficulty);
+	}
 	
 	return difficulty;
 }
@@ -157,6 +160,9 @@ void game(int difficulty, int *score, char name[MAX_STR])
 			   
 	//declare local variables;
 	_Bool won = 0;
+
+	//win_matches should be difficulty times board size
+	//int win_matches = (difficulty * board_size);
 	int win_matches = board_size, matches = 0, scoreSaveUser;
 
 	do
@@ -193,43 +199,47 @@ _Bool matches_made_board(int difficulty, int *row1, int *column1, int *row2, int
 {
 	_Bool match = 0;
 
-	//Call check match to check of their is a match between the two coordiante pairs.
-	match = check_matches(*row1, *column1, *row2, *column2, board_size, game_board);
+    //Call check match to check of their is a match between the two coordiante pairs.
+    match = check_matches(*row1, *column1, *row2, *column2, board_size, game_board);
 
-	//If there is match, assign those locations on the bool board 1's and increment the number of matches made
-	if(match)
-	{
-        match_board[*row1 - 1][*column1 - 1] = 1;
-        match_board[*row2 - 1][*column2 - 1] = 1;
-        *matches += 1;
-	}
-
-	//display matches made board
-	printf("\n");
-	for(int row_index = 0; row_index < board_size; row_index++)
-	{
-		for(int col_index = 0; col_index < board_size; col_index++)
+    //If there is match, assign those locations on the bool board 1's and increment the number of matches made
+    if(match)
+    {
+		if((match_board[*row1 - 1][*column1 - 1] == 0) && (match_board[*row2 - 1][*column2 - 1] == 0))
 		{
-			if(match_board[row_index][col_index] == 1)
-			{
-				printf("[%c]", game_board[row_index][col_index]);
-			}
-			else
-			{
-				printf("[ ]");
-			}
-		}   
-		printf("\n");
-	}
+        	match_board[*row1 - 1][*column1 - 1] = 1;
+        	match_board[*row2 - 1][*column2 - 1] = 1;
+        	*matches += 1;
+		}
+    }
 
-	//game is won, end function
-	if(*matches == win_matches)
-	{
-		return 1;
-	}
+    //display matches made board
+    printf("\n");
+    for(int row_index = 0; row_index < board_size; row_index++)
+    {
+        for(int col_index = 0; col_index < board_size; col_index++)
+        {
+            if(match_board[row_index][col_index] == 1)
+            {
+                printf("[%c]", game_board[row_index][col_index]);
+            }
+            else
+            {
+                printf("[ ]");
+            }
+            
+        }   
+        printf("\n");
+    }
 
-	//game is not won, end function
-	return 0;
+    //game is won, end function
+    if(*matches == win_matches)
+    {
+        return 1;
+    }
+
+    //game is not won, end function
+    return 0;
 }
 
 _Bool duplicate(int x, int y, int a, int b)
@@ -251,7 +261,7 @@ void get_coordinates(int board_size, int *row1, int *column1, int *row2, int *co
 	//check that they are valid
 	while(!valid)
 	{
-		if((((*row1 < 1) || (*row1 > board_size)) || ((*column1 < 1) || (*column1 > board_size)) ) )
+		if( ( ((*row1 < 1) || (*row1 > board_size)) || ((*column1 < 1) || (*column1 > board_size)) ) )
 		{
 			printf("Please enter valid coordinates between 1 and %d\n", board_size);
 			scanf("%d %d", row1, column1);
@@ -266,22 +276,31 @@ void get_coordinates(int board_size, int *row1, int *column1, int *row2, int *co
 	printf("\n");
 
 	//get 2nd pair of coordinates
-	printf("Enter your coordinates from 1 to %d\n", board_size);
-	scanf("%d %d", row2, column2);
-
-	//check that they are valid
-	while(!valid)
+	do
 	{
-		if((((*row2 < 1) || (*row2 > board_size)) || ((*column2 < 1) || (*column2 > board_size)) ) )
+		printf("Enter your coordinates from 1 to %d\n", board_size);
+		scanf("%d %d", row2, column2);
+
+		//1st check that they are valid (within the proper range)
+		while(!valid)
 		{
-			printf("Please enter valid coordinates between 1 and %d\n", board_size);
-			scanf("%d %d", row2, column2);
+			if( ( ((*row2 < 1) || (*row2 > board_size)) || ((*column2 < 1) || (*column2 > board_size)) ) )
+			{
+				printf("Please enter valid coordinates between 1 and %d\n", board_size);
+				scanf("%d %d", row2, column2);
+			}
+			else
+			{
+				valid = 1;
+			}
 		}
-		else
-		{
-			valid = 1;
+
+		//2nd check that they are not duplicate coordinates
+		if((*row1 == *row2) && (*column1 == *column2))
+		{	
+			printf("Duplicate coordinates!\n");
 		}
-	}
+	}while(valid && ((*row1 == *row2) && (*column1 == *column2)));
 
 	//return line for proper formating
 	printf("\n");
@@ -335,6 +354,7 @@ void fill_board_with_pairs(int difficulty, int board_size, char game_board[][boa
     {
         for(int index = 0; symbol_check[index] != '\0'; index++)
         {
+            //printf("%c ", symbol_check[index]);
             if(symbol_check[index] == pair_symbol)
             {
                 pair_symbol = random_symbol_generator();
@@ -401,10 +421,10 @@ void playing_game_board(int difficulty, int *row1, int *column1, int *row2, int 
     //declare local variables
     _Bool displayed1 = 0, displayed2 = 0;
 
-	/* 
-	Display board, based on difficulty. Will initially be blank. This will display cards, as they are flipped and
-	call the check matches funciton to check for matches.
-	*/
+/* 
+Display board, based on difficulty. Will initially be blank. This will display cards, as they are flipped and
+call the check matches funciton to check for matches.
+*/
 
     for(int row_index = 0; row_index < board_size; row_index++)
     {
@@ -437,6 +457,8 @@ void playing_game_board(int difficulty, int *row1, int *column1, int *row2, int 
         printf("MATCHED!");
         printf("\n");
     }
+
+    return;
 }
 
 void prefill_bool_board(int board_size, _Bool match_board[][board_size + 1])
@@ -450,6 +472,8 @@ void prefill_bool_board(int board_size, _Bool match_board[][board_size + 1])
         } 
         match_board[row_index][col_index] = '\0'; 
     }
+
+    return;
 }
 
 int scoreGet(int *score, int *row1, int *column1, int *row2, int *column2, int board_size, char game_board[][board_size + 1])
@@ -470,12 +494,12 @@ _Bool check_matches(int row1, int column1, int row2, int column2, int board_size
     _Bool match = 0;
 
     //Check for matches. Subtract 1 from each of the coordinates to align them with the proper indices in the array.
-    if(game_board[row1 - 1][column1 - 1] == game_board[row2 - 1][column2 - 1])
-    {
-        //match made
-        match = 1;
-        return match;
-    }
+	if(game_board[row1 - 1][column1 - 1] == game_board[row2 - 1][column2 - 1])
+	{
+		//match made
+		match = 1;
+		return match;
+	}
 
     //no match
     return match;
@@ -494,7 +518,7 @@ int random_number_generator(int board_size)
 }
 
 //generates a random symbol between @ and !
-char random_symbol_generator()
+char random_symbol_generator(void)
 {
     //declare local variables
     char symbol = 'A';
