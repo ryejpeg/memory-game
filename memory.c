@@ -1,3 +1,5 @@
+
+  
 // PROJ 9 FINAL PROJECT
 // MEMORY GAME
 // A program that ______
@@ -123,9 +125,15 @@ int menu()
 int difficultySelect()
 {
 	int difficulty;
-	
+
 	printf("Enter difficulty (1, 2, or 3): ");
 	scanf("%d", &difficulty);
+
+	while((difficulty < 1) || (difficulty > 3))
+	{
+		printf("Enter a difficulty between 1 and 3:\n");
+		scanf("%d", &difficulty);
+	}
 	
 	return difficulty;
 }
@@ -159,6 +167,9 @@ void game(int difficulty, int *score, char name[MAX_STR])
 			   
 	//declare local variables;
 	_Bool won = 0;
+
+	//win_matches should be difficulty times board size
+	//int win_matches = (difficulty * board_size);
 	int win_matches = board_size, matches = 0, scoreSaveUser;
 
 	do
@@ -201,9 +212,12 @@ _Bool matches_made_board(int difficulty, int *row1, int *column1, int *row2, int
     //If there is match, assign those locations on the bool board 1's and increment the number of matches made
     if(match)
     {
-        match_board[*row1 - 1][*column1 - 1] = 1;
-        match_board[*row2 - 1][*column2 - 1] = 1;
-        *matches += 1;
+		if((match_board[*row1 - 1][*column1 - 1] == 0) && (match_board[*row2 - 1][*column2 - 1] == 0))
+		{
+        	match_board[*row1 - 1][*column1 - 1] = 1;
+        	match_board[*row2 - 1][*column2 - 1] = 1;
+        	*matches += 1;
+		}
     }
 
     //display matches made board
@@ -279,7 +293,7 @@ void get_coordinates(int board_size, int *row1, int *column1, int *row2, int *co
 	//check that they are valid
 	while(!valid)
 	{
-		if((((*row1 < 1) || (*row1 > board_size)) || ((*column1 < 1) || (*column1 > board_size)) ) )
+		if( ( ((*row1 < 1) || (*row1 > board_size)) || ((*column1 < 1) || (*column1 > board_size)) ) )
 		{
 			printf("Please enter valid coordinates between 1 and %d\n", board_size);
 			scanf("%d %d", row1, column1);
@@ -293,23 +307,33 @@ void get_coordinates(int board_size, int *row1, int *column1, int *row2, int *co
 
 	printf("\n");
 
-	//get 2nd pair of coordinates
-	printf("Enter your coordinates from 1 to %d\n", board_size);
-	scanf("%d %d", row2, column2);
 
-	//check that they are valid
-	while(!valid)
+	//get 2nd pair of coordinates
+	do
 	{
-		if((((*row2 < 1) || (*row2 > board_size)) || ((*column2 < 1) || (*column2 > board_size)) ) )
+		printf("Enter your coordinates from 1 to %d\n", board_size);
+		scanf("%d %d", row2, column2);
+
+		//1st check that they are valid (within the proper range)
+		while(!valid)
 		{
-			printf("Please enter valid coordinates between 1 and %d\n", board_size);
-			scanf("%d %d", row2, column2);
+			if( ( ((*row2 < 1) || (*row2 > board_size)) || ((*column2 < 1) || (*column2 > board_size)) ) )
+			{
+				printf("Please enter valid coordinates between 1 and %d\n", board_size);
+				scanf("%d %d", row2, column2);
+			}
+			else
+			{
+				valid = 1;
+			}
 		}
-		else
-		{
-			valid = 1;
+
+		//2nd check that they are not duplicate coordinates
+		if((*row1 == *row2) && (*column1 == *column2))
+		{	
+			printf("Duplicate coordinates!\n");
 		}
-	}
+	}while(valid && ((*row1 == *row2) && (*column1 == *column2)));
 
 	//return line for proper formating
 	printf("\n");
@@ -549,12 +573,12 @@ _Bool check_matches(int row1, int column1, int row2, int column2, int board_size
     _Bool match = 0;
 
     //Check for matches. Subtract 1 from each of the coordinates to align them with the proper indices in the array.
-    if(game_board[row1 - 1][column1 - 1] == game_board[row2 - 1][column2 - 1])
-    {
-        //match made
-        match = 1;
-        return match;
-    }
+	if(game_board[row1 - 1][column1 - 1] == game_board[row2 - 1][column2 - 1])
+	{
+		//match made
+		match = 1;
+		return match;
+	}
 
     //no match
     return match;
