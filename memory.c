@@ -1,5 +1,3 @@
-
-  
 // PROJ 9 FINAL PROJECT
 // MEMORY GAME
 // A program that ______
@@ -15,7 +13,6 @@
 #define TOTAL_NAME 10
 
 void game(int difficulty, int *score1, char name[MAX_STR]);
-void outputnames(FILE* fp, char array[][MAX_STR], int score[]);
 int menu();
 int difficultySelect();
 void coordinate(int *x, int *y, int *a ,  int *b);
@@ -82,7 +79,6 @@ int main()
 				}
 				scoreToFile(fp, score, nameWinner, open_status);
 				fclose(fp);
-//				outputnames(fp, array, &score);
 				break;
 				
 			case 2:	// second case deals with scoreboard display.
@@ -125,15 +121,9 @@ int menu()
 int difficultySelect()
 {
 	int difficulty;
-
+	
 	printf("Enter difficulty (1, 2, or 3): ");
 	scanf("%d", &difficulty);
-
-	while((difficulty < 1) || (difficulty > 3))
-	{
-		printf("Enter a difficulty between 1 and 3:\n");
-		scanf("%d", &difficulty);
-	}
 	
 	return difficulty;
 }
@@ -167,9 +157,6 @@ void game(int difficulty, int *score, char name[MAX_STR])
 			   
 	//declare local variables;
 	_Bool won = 0;
-
-	//win_matches should be difficulty times board size
-	//int win_matches = (difficulty * board_size);
 	int win_matches = board_size, matches = 0, scoreSaveUser;
 
 	do
@@ -206,72 +193,43 @@ _Bool matches_made_board(int difficulty, int *row1, int *column1, int *row2, int
 {
 	_Bool match = 0;
 
-    //Call check match to check of their is a match between the two coordiante pairs.
-    match = check_matches(*row1, *column1, *row2, *column2, board_size, game_board);
+	//Call check match to check of their is a match between the two coordiante pairs.
+	match = check_matches(*row1, *column1, *row2, *column2, board_size, game_board);
 
-    //If there is match, assign those locations on the bool board 1's and increment the number of matches made
-    if(match)
-    {
-		if((match_board[*row1 - 1][*column1 - 1] == 0) && (match_board[*row2 - 1][*column2 - 1] == 0))
+	//If there is match, assign those locations on the bool board 1's and increment the number of matches made
+	if(match)
+	{
+        match_board[*row1 - 1][*column1 - 1] = 1;
+        match_board[*row2 - 1][*column2 - 1] = 1;
+        *matches += 1;
+	}
+
+	//display matches made board
+	printf("\n");
+	for(int row_index = 0; row_index < board_size; row_index++)
+	{
+		for(int col_index = 0; col_index < board_size; col_index++)
 		{
-        	match_board[*row1 - 1][*column1 - 1] = 1;
-        	match_board[*row2 - 1][*column2 - 1] = 1;
-        	*matches += 1;
-		}
-    }
-
-    //display matches made board
-    printf("\n");
-    for(int row_index = 0; row_index < board_size; row_index++)
-    {
-        for(int col_index = 0; col_index < board_size; col_index++)
-        {
-            if(match_board[row_index][col_index] == 1)
-            {
-                printf("[%c]", game_board[row_index][col_index]);
-            }
-            else
-            {
-                printf("[ ]");
-            }
-            
-        }   
-        printf("\n");
-    }
-
-    //game is won, end function
-    if(*matches == win_matches)
-    {
-        return 1;
-    }
-
-    //game is not won, end function
-    return 0;
-}
-
-void outputnames(FILE *fp, char array[][MAX_STR], int score[])
-{
-	FILE *output;
-	char temp;
-	
-	int i = 0, j = 0, counter = 0;
-
-		for (i; i< 15; i++)
-		{
-			for (j; (j< 15) || (temp != '\n') ; j++)
+			if(match_board[row_index][col_index] == 1)
 			{
-				scanf("%c", &temp);
-				fprintf(output,"%c", temp);
+				printf("[%c]", game_board[row_index][col_index]);
 			}
-
-			do
+			else
 			{
-				fprintf(output, " %d", *score);
-				counter ++;
+				printf("[ ]");
 			}
-			while (counter != 10);
-		}
+		}   
+		printf("\n");
+	}
 
+	//game is won, end function
+	if(*matches == win_matches)
+	{
+		return 1;
+	}
+
+	//game is not won, end function
+	return 0;
 }
 
 _Bool duplicate(int x, int y, int a, int b)
@@ -293,7 +251,7 @@ void get_coordinates(int board_size, int *row1, int *column1, int *row2, int *co
 	//check that they are valid
 	while(!valid)
 	{
-		if( ( ((*row1 < 1) || (*row1 > board_size)) || ((*column1 < 1) || (*column1 > board_size)) ) )
+		if((((*row1 < 1) || (*row1 > board_size)) || ((*column1 < 1) || (*column1 > board_size)) ) )
 		{
 			printf("Please enter valid coordinates between 1 and %d\n", board_size);
 			scanf("%d %d", row1, column1);
@@ -307,33 +265,23 @@ void get_coordinates(int board_size, int *row1, int *column1, int *row2, int *co
 
 	printf("\n");
 
-
 	//get 2nd pair of coordinates
-	do
+	printf("Enter your coordinates from 1 to %d\n", board_size);
+	scanf("%d %d", row2, column2);
+
+	//check that they are valid
+	while(!valid)
 	{
-		printf("Enter your coordinates from 1 to %d\n", board_size);
-		scanf("%d %d", row2, column2);
-
-		//1st check that they are valid (within the proper range)
-		while(!valid)
+		if((((*row2 < 1) || (*row2 > board_size)) || ((*column2 < 1) || (*column2 > board_size)) ) )
 		{
-			if( ( ((*row2 < 1) || (*row2 > board_size)) || ((*column2 < 1) || (*column2 > board_size)) ) )
-			{
-				printf("Please enter valid coordinates between 1 and %d\n", board_size);
-				scanf("%d %d", row2, column2);
-			}
-			else
-			{
-				valid = 1;
-			}
+			printf("Please enter valid coordinates between 1 and %d\n", board_size);
+			scanf("%d %d", row2, column2);
 		}
-
-		//2nd check that they are not duplicate coordinates
-		if((*row1 == *row2) && (*column1 == *column2))
-		{	
-			printf("Duplicate coordinates!\n");
+		else
+		{
+			valid = 1;
 		}
-	}while(valid && ((*row1 == *row2) && (*column1 == *column2)));
+	}
 
 	//return line for proper formating
 	printf("\n");
@@ -387,7 +335,6 @@ void fill_board_with_pairs(int difficulty, int board_size, char game_board[][boa
     {
         for(int index = 0; symbol_check[index] != '\0'; index++)
         {
-            //printf("%c ", symbol_check[index]);
             if(symbol_check[index] == pair_symbol)
             {
                 pair_symbol = random_symbol_generator();
@@ -436,7 +383,7 @@ void shuffle_game_board(int difficulty, int board_size, char game_board[][board_
 	}
 }
 
-void blank_board( int board_size, char game_board[][board_size + 1])
+void blank_board(int board_size, char game_board[][board_size + 1])
 {
 	for(int row_index = 0; row_index < board_size; row_index++)
 	{
@@ -454,10 +401,10 @@ void playing_game_board(int difficulty, int *row1, int *column1, int *row2, int 
     //declare local variables
     _Bool displayed1 = 0, displayed2 = 0;
 
-/* 
-Display board, based on difficulty. Will initially be blank. This will display cards, as they are flipped and
-call the check matches funciton to check for matches.
-*/
+	/* 
+	Display board, based on difficulty. Will initially be blank. This will display cards, as they are flipped and
+	call the check matches funciton to check for matches.
+	*/
 
     for(int row_index = 0; row_index < board_size; row_index++)
     {
@@ -490,8 +437,6 @@ call the check matches funciton to check for matches.
         printf("MATCHED!");
         printf("\n");
     }
-
-    return;
 }
 
 void prefill_bool_board(int board_size, _Bool match_board[][board_size + 1])
@@ -505,55 +450,7 @@ void prefill_bool_board(int board_size, _Bool match_board[][board_size + 1])
         } 
         match_board[row_index][col_index] = '\0'; 
     }
-
-    return;
 }
-
-
-/*
-//Keeps track of which cards have been mathced, with bools. Returns won bool as true when the game is over.
-_Bool matches_made_board(int difficulty, int *row1, int *column1, int *row2, int *column2, int board_size, char game_board[][board_size + 1], _Bool match_board[][board_size + 1])
-{
-    int win_matches = 0, matches = 0;
-    _Bool match = 0;
-    win_matches = (board_size);
-    
-    //Call check match to check of their is a match between the two coordiante pairs.
-    match = check_matches(*row1, *column1, *row2, *column2, board_size, game_board);
-    //If there is match, assign those locations on the bool board 1's and increment the number of matches made
-    if(match)
-    {
-        match_board[*row1 - 1][*column1 - 1] = 1;
-        match_board[*row2 - 1][*column2 - 1] = 1;
-        matches++;
-    }
-    //display matches made board
-    printf("\n");
-    for(int row_index = 0; row_index < board_size; row_index++)
-    {
-        for(int col_index = 0; col_index < board_size; col_index++)
-        {
-            if(match_board[row_index][col_index] == 1)
-            {
-                printf("[%c]", game_board[row_index][col_index]);
-            }
-            else
-            {
-                printf("[ ]");
-            }
-            
-        }   
-        printf("\n");
-    }
-    //game is won, end function
-    if(matches == win_matches)
-    {
-        return 1;
-    }
-    //game is not won, end function
-    return 0;
-}
-*/
 
 int scoreGet(int *score, int *row1, int *column1, int *row2, int *column2, int board_size, char game_board[][board_size + 1])
 {
@@ -573,12 +470,12 @@ _Bool check_matches(int row1, int column1, int row2, int column2, int board_size
     _Bool match = 0;
 
     //Check for matches. Subtract 1 from each of the coordinates to align them with the proper indices in the array.
-	if(game_board[row1 - 1][column1 - 1] == game_board[row2 - 1][column2 - 1])
-	{
-		//match made
-		match = 1;
-		return match;
-	}
+    if(game_board[row1 - 1][column1 - 1] == game_board[row2 - 1][column2 - 1])
+    {
+        //match made
+        match = 1;
+        return match;
+    }
 
     //no match
     return match;
@@ -597,7 +494,7 @@ int random_number_generator(int board_size)
 }
 
 //generates a random symbol between @ and !
-char random_symbol_generator(void)
+char random_symbol_generator()
 {
     //declare local variables
     char symbol = 'A';
@@ -664,22 +561,34 @@ void scoreToFile(FILE *fp, int score, char name[MAX_STR], char open_status)
 		
 		scoreSort(fp, name, score, scoreboard, arrayNames, counter);
 		fclose(fp);
-		fp = fopen("scores.txt", "a");
+		fp = fopen("scores.txt", "w");
 	}
 	else if(open_status == 'w')
 	{
 		scoreSort(fp, name, score, scoreboard, arrayNames, counter);
 	}
 
-	printf("\n\nscore store test (scoreToFile): \n%s: %d\n\n", arrayNames[0], scoreboard[0]);
+//DEBUG ONLY START
 
+	int testind = 0;
+
+	while(testind < (counter + 1))
+	{
+		printf("\n\nscore store test (scoreToFile): \n%s: %d\n\n", arrayNames[testind], scoreboard[testind]);
+		testind++;
+	}
+
+//DEBUG ONLY END
+
+	tempIndex = 0;
 	do
 	{
 		(fprintf(fp, "%s %d\n", arrayNames[tempIndex], scoreboard[tempIndex]));
 		tempIndex++;
 		iteration++;
 		printf("\nITERATING (scoreToFile): %d\n", iteration);
-	}while(iteration < counter);
+	}
+	while(iteration < (counter + 1));
 }
 
 void scoreSort(FILE *fp, char nameNew[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char namesAll[][MAX_STR], int counter)
@@ -690,7 +599,16 @@ void scoreSort(FILE *fp, char nameNew[MAX_STR], int scoreNew, int scoreboard[TOT
 	// Check how many scores there are ('counter' variable)
 	printf("\n\n\n%d TOTAL NAMES\n\n\n", counter);
 
+	printf("\n\nDISPLAYING ALL SCORES IN SCOREBOARD.\n\n");
+	int testInd = 0;
+	while(testInd < counter)
+	{
+		printf("At scoreboard index %d, we have %d\n", testInd, scoreboard[testInd]);
+		testInd++;
+	}
+
 	// SORTING
+
 	if(scoreboard[0] < 0)
 	{
 		scoreboard[0] = scoreNew;
@@ -698,29 +616,52 @@ void scoreSort(FILE *fp, char nameNew[MAX_STR], int scoreNew, int scoreboard[TOT
 	}
 	else if((counter < 10) && (scoreNew <= scoreboard[counter - 1]))
 	{
+		printf("\n\nSORT START SCORE WHEN COUNTER IS LESS THAN 10 AND SCORE IS LESS THAN OR EQUAL THAN LOWEST\n\n");
 		scoreboard[counter] = scoreNew;
 		strcpy(namesAll[counter], nameNew);
-		printf("\n\nSAVED SCORE OF DEGREE %d\n\n", counter);
+		printf("\n\nSAVED SCORE OF DEGREE %d\n\n", counter + 1);
 	}
 	else if((counter < 10) && (scoreNew > scoreboard[counter - 1]))
 	{
-		printf("\n\nSORT START SCORE WHEN COUNTER IS LESS THAN 10 AND SCORE IS HIGHER\n\n");
-		while(!sorted)
+		printf("\n\nSORT START SCORE WHEN COUNTER IS LESS THAN 10 AND new SCORE IS HIGHER\n\n");
+		do
 		{
-		sorted = 1;
+			sorted = 1;
 		 	for(int index = 0; index < (counter + 1); index++) 
 			{
-				tempScore = scoreboard[counter - 1];
-				scoreboard[counter - 1] = scoreNew;
-				scoreboard[counter] = tempScore;
-				strcpy(tempName, namesAll[counter - 1]);
-				strcpy(namesAll[counter - 1], nameNew);
-				strcpy(namesAll[counter], tempName);
+				if(scoreNew > scoreboard[counter - 1])
+				{
+					printf("\nBEFORE AT VARIABLE scoreboard INDEX %d: %d\n\n", (counter - 1), scoreboard[counter - 1]);
+					printf("\tAT VARIABLE scoreboard INDEX %d: %d\n\n", (counter), scoreboard[counter]);
+					// sort score number first
+					tempScore = scoreboard[counter - 1];
+					scoreboard[counter - 1] = scoreNew;
+					scoreboard[counter] = tempScore;
+					printf("\nAFTER AT VARIABLE scoreboard INDEX %d: %d\n\n", (counter - 1), scoreboard[counter - 1]);
+					printf("\n\tAT VARIABLE scoreboard INDEX %d: %d\n\n", (counter), scoreboard[counter]);
+
+					// sort name with score second
+					strcpy(tempName, namesAll[counter - 1]);
+					strcpy(namesAll[counter - 1], nameNew);
+					strcpy(namesAll[counter], tempName);
+				
+					for(int index = (counter + 1); index >= 0; index--) 
+					{
+						if(scoreboard[index] > scoreboard[index])
+						{
+							tempScore = scoreboard[counter - 1];
+							scoreboard[counter - 1] = scoreNew;
+							strcpy(tempName, namesAll[counter - 1]);
+							strcpy(namesAll[counter - 1], nameNew);
+						}
+					}
+				}
 			}
 
-		sorted = 0;
+			sorted = 0;
 		}
-		printf("\n\nSORTED SCORE WHEN COUNTER IS LESS THAN 10 AND SCORE IS HIGHER\n\n");
+		while(sorted == 0);
+		printf("\n\nSORTED SCORE end WHEN COUNTER IS LESS THAN 10 AND SCORE IS HIGHER\n\n");
 	}
 	else if((counter == 10) && (scoreNew > scoreboard[counter - 1]))
 	{
