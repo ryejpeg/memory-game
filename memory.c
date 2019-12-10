@@ -648,75 +648,72 @@ void scoreSort(FILE *fp, char nameNew[MAX_STR], int scoreNew, int scoreboard[TOT
 	}
 	else if((counter < 10) && (scoreNew <= scoreboard[counter - 1]))
 	{
-		printf("\n\nSORT START SCORE WHEN COUNTER IS LESS THAN 10 AND SCORE IS LESS THAN OR EQUAL THAN LOWEST\n\n");
 		scoreboard[counter] = scoreNew;
 		strcpy(namesAll[counter], nameNew);
-		printf("\n\nSAVED SCORE OF DEGREE %d\n\n", counter + 1);
 	}
 	else if((counter < 10) && (scoreNew > scoreboard[counter - 1]))
 	{
-		printf("\n\nSORT START SCORE WHEN COUNTER IS LESS THAN 10 AND new SCORE IS HIGHER\n\n");
+		scoreboard[counter] = scoreNew;
+		strcpy(namesAll[counter], nameNew);
 		do
 		{
 			sorted = 1;
-			for(int index = 0; index < (counter + 1); index++) 
+			for(int index = counter; index != 0; index--) 
 			{
-		 		if(scoreNew > scoreboard[counter - 1])
+				if(scoreboard[index] > scoreboard[index - 1])
 				{
-					printf("\nBEFORE first loop AT VARIABLE scoreboard INDEX %d: %d\n\n", (index - 1), scoreboard[counter - 1]);
-					printf("\tAT VARIABLE scoreboard INDEX %d: %d\n\n", (index), scoreboard[index]);
 					// sort score number first
-					tempScore = scoreboard[counter - 1];
-					scoreboard[counter - 1] = scoreNew;
-					scoreboard[counter] = tempScore;
-					printf("\nAFTER first loop AT VARIABLE scoreboard INDEX %d: %d\n\n", (index - 1), scoreboard[counter - 1]);
-					printf("\n\tAT VARIABLE scoreboard INDEX %d: %d\n\n", (index), scoreboard[index]);
+					tempScore = scoreboard[index - 1];
+					scoreboard[index - 1] = scoreboard[index];
+					scoreboard[index] = tempScore;
 
 					// sort name with score second
-					strcpy(tempName, namesAll[counter - 1]);
-					strcpy(namesAll[counter - 1], nameNew);
-					strcpy(namesAll[counter], tempName);
-				
-					for(int ind1 = (counter + 1); ind1 >= 0; ind1--) 
-					{
-						if(scoreboard[ind1] > scoreboard[ind1 - 1])
-						{
-							printf("\nBEFORE 2nd loop AT VARIABLE scoreboard INDEX %d: %d\n\n", (ind1 - 1), scoreboard[ind1 - 1]);
-							printf("\tAT VARIABLE scoreboard INDEX %d: %d\n\n", (ind1), scoreboard[ind1]);
-							tempScore = scoreboard[ind1 - 1];
-							scoreboard[index - 1] = scoreboard[ind1];
-							scoreboard[ind1] = tempScore;
-						
-							strcpy(tempName, namesAll[ind1 - 1]);
-							strcpy(namesAll[ind1 - 1], namesAll[ind1]);
-							strcpy(namesAll[ind1], tempName);
-							printf("\nAFTER 2nd loop AT VARIABLE scoreboard INDEX %d: %d\n\n", (ind1 - 1), scoreboard[ind1 - 1]);
-							printf("\n\tAT VARIABLE scoreboard INDEX %d: %d\n\n", (ind1), scoreboard[ind1]);
-							printf("\nSHOW NAME: %s", namesAll[ind1]);
-						}
-					}
+					strcpy(tempName, namesAll[index - 1]);
+					strcpy(namesAll[index - 1], namesAll[index]);
+					strcpy(namesAll[index], tempName);
 				}
 			}
+			
 			sorted = 0;
 		}
 		while(sorted == 1);
-		printf("\n\nSORTED SCORE end WHEN COUNTER IS LESS THAN 10 AND SCORE IS HIGHER\n\n");
 	}
 	else if((counter == 10) && (scoreNew > scoreboard[counter - 1]))
 	{
-		while(!sorted)
+		tempScore = scoreNew;
+		strcpy(tempName, nameNew);
+
+		// if the new score is higher than the lowest score already on scoreboard
+		if(tempScore > scoreboard[index])
 		{
-		sorted = 1;
-		 	for(int index = 0; index < 10; index++) 
+			// sort score number first
+			scoreboard[index] = tempScore;
+
+			// sort name with score second
+			strcpy(namesAll[index], tempName);
+
+			do
 			{
-				if(scoreNew > scoreboard[counter - 1])
+				sorted = 1;
+				for(int index = (TOTAL_NAME - 1); index != 0; index--) 
 				{
-					tempScore = scoreboard[counter - 1];
-					scoreboard[counter - 1] = scoreNew;
-					strcpy(tempName, namesAll[counter - 1]);
-					strcpy(namesAll[counter - 1], nameNew);
+					if(tempScore > scoreboard[index])
+					{
+						// sort score number first
+						tempScore = scoreboard[index - 1];
+						scoreboard[index - 1] = scoreboard[index];
+						scoreboard[index] = tempScore;
+
+						// sort name with score second
+						strcpy(tempName, namesAll[index - 1]);
+						strcpy(namesAll[index - 1], namesAll[index]);
+						strcpy(namesAll[index], tempName);
+					}
 				}
+			
+				sorted = 0;
 			}
+		while(sorted == 1);
 		}
 	}
 }
