@@ -163,7 +163,7 @@ void game(int difficulty, int *score, char name[MAX_STR])
 
 	//win_matches should be difficulty times board size
 	//int win_matches = (difficulty * board_size);
-	int win_matches = board_size, matches = 0, scoreSaveUser;
+	int win_matches = (difficulty * board_size), matches = 0, scoreSaveUser;
 
 	do
 	{
@@ -426,6 +426,14 @@ Display board, based on difficulty. Will initially be blank. This will display c
 call the check matches funciton to check for matches.
 */
 
+// following for loop is for spaces to prevent cheating
+
+	for(int index = 0; index < 30; index++)
+	{
+		printf("\n");
+	}
+
+// start displaying board
     for(int row_index = 0; row_index < board_size; row_index++)
     {
         for(int col_index = 0; col_index < board_size; col_index++)
@@ -543,7 +551,7 @@ void displayScore(FILE *fp)
 	// -1 intiialization indicates it's not a true score 
 	for(int index = 0; index < TOTAL_NAME; index++)
 	{
-		scoreboard[index] = -1;
+		scoreboard[index] = 19;
 	}
 
 	while(fscanf(fp, "%s %d\n", array[indexScore], &scoreboard[indexScore]) == 2)
@@ -572,7 +580,7 @@ void scoreToFile(FILE *fp, int score, char name[MAX_STR], char open_status)
 	// -1 intiialization indicates it's not a true score 
 	for(int index = 0; index < TOTAL_NAME; index++)
 	{
-		scoreboard[index] = -1;
+		scoreboard[index] = 19;
 	}
 
 	if(open_status == 'r')
@@ -633,7 +641,7 @@ void scoreSort(FILE *fp, char nameNew[MAX_STR], int scoreNew, int scoreboard[TOT
 
 	// SORTING
 
-	if(scoreboard[0] < 0)
+	if(scoreboard[0] > 18)
 	{
 		scoreboard[0] = scoreNew;
 		strcpy(namesAll[0], nameNew);
@@ -651,43 +659,47 @@ void scoreSort(FILE *fp, char nameNew[MAX_STR], int scoreNew, int scoreboard[TOT
 		do
 		{
 			sorted = 1;
-		 	for(int index = 0; index < (counter + 1); index++) 
+			for(int index = 0; index < (counter + 1); index++) 
 			{
-				if(scoreNew > scoreboard[counter - 1])
+		 		if(scoreNew > scoreboard[counter - 1])
 				{
-					printf("\nBEFORE AT VARIABLE scoreboard INDEX %d: %d\n\n", (counter - 1), scoreboard[counter - 1]);
-					printf("\tAT VARIABLE scoreboard INDEX %d: %d\n\n", (counter), scoreboard[counter]);
+					printf("\nBEFORE first loop AT VARIABLE scoreboard INDEX %d: %d\n\n", (index - 1), scoreboard[counter - 1]);
+					printf("\tAT VARIABLE scoreboard INDEX %d: %d\n\n", (index), scoreboard[index]);
 					// sort score number first
 					tempScore = scoreboard[counter - 1];
 					scoreboard[counter - 1] = scoreNew;
 					scoreboard[counter] = tempScore;
-					printf("\nAFTER AT VARIABLE scoreboard INDEX %d: %d\n\n", (counter - 1), scoreboard[counter - 1]);
-					printf("\n\tAT VARIABLE scoreboard INDEX %d: %d\n\n", (counter), scoreboard[counter]);
+					printf("\nAFTER first loop AT VARIABLE scoreboard INDEX %d: %d\n\n", (index - 1), scoreboard[counter - 1]);
+					printf("\n\tAT VARIABLE scoreboard INDEX %d: %d\n\n", (index), scoreboard[index]);
 
 					// sort name with score second
 					strcpy(tempName, namesAll[counter - 1]);
 					strcpy(namesAll[counter - 1], nameNew);
 					strcpy(namesAll[counter], tempName);
 				
-					for(int index = (counter + 1); index >= 0; index--) 
+					for(int ind1 = (counter + 1); ind1 >= 0; ind1--) 
 					{
-						if(scoreboard[index] > scoreboard[index - 1])
+						if(scoreboard[ind1] > scoreboard[ind1 - 1])
 						{
-							tempScore = scoreboard[index - 1];
-							scoreboard[index - 1] = scoreboard[index];
-							scoreboard[index] = tempScore;
-							
-							strcpy(tempName, namesAll[index - 1]);
-							strcpy(namesAll[index - 1], namesAll[index]);
-							strcpy(namesAll[index], tempName);
+							printf("\nBEFORE 2nd loop AT VARIABLE scoreboard INDEX %d: %d\n\n", (ind1 - 1), scoreboard[ind1 - 1]);
+							printf("\tAT VARIABLE scoreboard INDEX %d: %d\n\n", (ind1), scoreboard[ind1]);
+							tempScore = scoreboard[ind1 - 1];
+							scoreboard[index - 1] = scoreboard[ind1];
+							scoreboard[ind1] = tempScore;
+						
+							strcpy(tempName, namesAll[ind1 - 1]);
+							strcpy(namesAll[ind1 - 1], namesAll[ind1]);
+							strcpy(namesAll[ind1], tempName);
+							printf("\nAFTER 2nd loop AT VARIABLE scoreboard INDEX %d: %d\n\n", (ind1 - 1), scoreboard[ind1 - 1]);
+							printf("\n\tAT VARIABLE scoreboard INDEX %d: %d\n\n", (ind1), scoreboard[ind1]);
+							printf("\nSHOW NAME: %s", namesAll[ind1]);
 						}
 					}
 				}
 			}
-
 			sorted = 0;
 		}
-		while(sorted == 0);
+		while(sorted == 1);
 		printf("\n\nSORTED SCORE end WHEN COUNTER IS LESS THAN 10 AND SCORE IS HIGHER\n\n");
 	}
 	else if((counter == 10) && (scoreNew > scoreboard[counter - 1]))
