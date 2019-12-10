@@ -671,12 +671,12 @@ void scoreSort(FILE *fp, char nameNew[MAX_STR], int scoreNew, int scoreboard[TOT
 				
 					for(int index = (counter + 1); index >= 0; index--) 
 					{
-						if(scoreboard[index] > scoreboard[index])
+						if(scoreboard[index] > scoreboard[index - 1])
 						{
-							tempScore = scoreboard[counter - 1];
-							scoreboard[counter - 1] = scoreNew;
-							strcpy(tempName, namesAll[counter - 1]);
-							strcpy(namesAll[counter - 1], nameNew);
+							tempScore = scoreboard[index - 1];
+							scoreboard[index - 1] = scoreNew;
+							strcpy(tempName, namesAll[index - 1]);
+							strcpy(namesAll[index - 1], nameNew);
 						}
 					}
 				}
@@ -704,17 +704,8 @@ void scoreSort(FILE *fp, char nameNew[MAX_STR], int scoreNew, int scoreboard[TOT
 			}
 		}
 	}
-
-
 }
 
-/*
-	for(int index = 0; index < counter; counter++)
-	{
-		strcpy(nameStore[index], array[index]);
-		printf("\nORIGINAL: %s\nCOPY: %s\n\n", array[index], nameStore[index]);
-	}
-*/
 // ******
 // DO NOT MODIFY WITHOUT TELLING RYAN
 // SCOREKEEPING or SCORE.TXT FILE HANDLING END
