@@ -35,7 +35,7 @@ int random_number_generator(int board_size);
 char random_symbol_generator();
 
 void scoreToFile(FILE *fp, int score, char nameWinner[MAX_STR], char open_status);
-void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char namesAll[][MAX_STR], int counter);
+void scoreSort(FILE *fp, char nameNew[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char namesAll[][MAX_STR], int counter);
 
 int main()
 {
@@ -70,6 +70,7 @@ int main()
 
 				if((fp = (fopen("scores.txt", "r"))) == NULL)
 				{
+					fp = fopen("scores.txt", "w");
 					open_status = 'w';
 				}
 				else
@@ -641,50 +642,80 @@ void scoreToFile(FILE *fp, int score, char name[MAX_STR], char open_status)
 		fclose(fp);
 		fp = fopen("scores.txt", "a");
 	}
-	else
+	else if(open_status == 'w')
 	{
-		while(fscanf(fp, "%s %d", arrayNames[tempIndex], &scoreboard[tempIndex]) == 2)
-		{
-			counter++;
-			tempIndex++;
-			printf("\nCOUNTING (scoreToFile status'w'): %d\n", counter);
-		}
+		scoreSort(fp, name, score, scoreboard, arrayNames, counter);
 	}
-/*
-	while(iteration != 9);
+
+	printf("\n\nscore store test (scoreToFile): \n%s: %d\n\n", arrayNames[0], scoreboard[0]);
+
+	do
 	{
 		(fprintf(fp, "%s %d\n", arrayNames[tempIndex], scoreboard[tempIndex]));
 		tempIndex++;
 		iteration++;
-		printf("\nITERATING (scoreToFile): %d\n", counter);
-	}*/
+		printf("\nITERATING (scoreToFile): %d\n", iteration);
+	}while(iteration < counter);
 }
 
-void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char namesAll[][MAX_STR], int counter)
+void scoreSort(FILE *fp, char nameNew[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char namesAll[][MAX_STR], int counter)
 {
-	int scoreTotal, scoreStore, tempIndex;
-	char nameStore[TOTAL_NAME][MAX_STR];
+	_Bool sorted = 0;
+	int scoreTotal, tempScore, tempIndex;
+	char tempName[MAX_STR];
 	// Check how many scores there are ('counter' variable)
 	printf("\n\n\n%d TOTAL NAMES\n\n\n", counter);
 
-/*
 	// SORTING
 	if(scoreboard[0] < 0)
 	{
 		scoreboard[0] = scoreNew;
+		strcpy(namesAll[0], nameNew);
 	}
-	else if((counter < 10) && (scoreNew < scoreboard[counter - 1])
+	else if((counter < 10) && (scoreNew <= scoreboard[counter - 1]))
 	{
 		scoreboard[counter] = scoreNew;
+		strcpy(namesAll[counter], nameNew);
+		printf("\n\nSAVED SCORE OF DEGREE %d\n\n", counter);
 	}
-	else if((counter == 10) && (scoreNew > scoreboard[counter - 1]
+	else if((counter < 10) && (scoreNew > scoreboard[counter - 1]))
 	{
-	 	for(int index = 0; index < 10; index++) 
+		printf("\n\nSORT START SCORE WHEN COUNTER IS LESS THAN 10 AND SCORE IS HIGHER\n\n");
+		while(!sorted)
 		{
-			if
+		sorted = 1;
+		 	for(int index = 0; index < (counter + 1); index++) 
+			{
+				tempScore = scoreboard[counter - 1];
+				scoreboard[counter - 1] = scoreNew;
+				scoreboard[counter] = tempScore;
+				strcpy(tempName, namesAll[counter - 1]);
+				strcpy(namesAll[counter - 1], nameNew);
+				strcpy(namesAll[counter], tempName);
+			}
+
+		sorted = 0;
+		}
+		printf("\n\nSORTED SCORE WHEN COUNTER IS LESS THAN 10 AND SCORE IS HIGHER\n\n");
+	}
+	else if((counter == 10) && (scoreNew > scoreboard[counter - 1]))
+	{
+		while(!sorted)
+		{
+		sorted = 1;
+		 	for(int index = 0; index < 10; index++) 
+			{
+				if(scoreNew > scoreboard[counter - 1])
+				{
+					tempScore = scoreboard[counter - 1];
+					scoreboard[counter - 1] = scoreNew;
+					strcpy(tempName, namesAll[counter - 1]);
+					strcpy(namesAll[counter - 1], nameNew);
+				}
+			}
 		}
 	}
-*/
+
 
 }
 
