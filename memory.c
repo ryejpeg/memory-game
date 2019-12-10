@@ -551,7 +551,7 @@ void displayScore(FILE *fp)
 	// -1 intiialization indicates it's not a true score 
 	for(int index = 0; index < TOTAL_NAME; index++)
 	{
-		scoreboard[index] = 19;
+		scoreboard[index] = 37;
 	}
 
 	while(fscanf(fp, "%s %d\n", array[indexScore], &scoreboard[indexScore]) == 2)
@@ -580,7 +580,7 @@ void scoreToFile(FILE *fp, int score, char name[MAX_STR], char open_status)
 	// -1 intiialization indicates it's not a true score 
 	for(int index = 0; index < TOTAL_NAME; index++)
 	{
-		scoreboard[index] = 19;
+		scoreboard[index] = 37;
 	}
 
 	if(open_status == 'r')
@@ -641,7 +641,7 @@ void scoreSort(FILE *fp, char nameNew[MAX_STR], int scoreNew, int scoreboard[TOT
 
 	// SORTING
 
-	if(scoreboard[0] > 18)
+	if(scoreboard[0] > 36)
 	{
 		scoreboard[0] = scoreNew;
 		strcpy(namesAll[0], nameNew);
