@@ -674,9 +674,12 @@ void scoreSort(FILE *fp, char nameNew[MAX_STR], int scoreNew, int scoreboard[TOT
 						if(scoreboard[index] > scoreboard[index - 1])
 						{
 							tempScore = scoreboard[index - 1];
-							scoreboard[index - 1] = scoreNew;
+							scoreboard[index - 1] = scoreboard[index];
+							scoreboard[index] = tempScore;
+							
 							strcpy(tempName, namesAll[index - 1]);
-							strcpy(namesAll[index - 1], nameNew);
+							strcpy(namesAll[index - 1], namesAll[index]);
+							strcpy(namesAll[index], tempName);
 						}
 					}
 				}
