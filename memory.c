@@ -34,8 +34,8 @@ _Bool check_matches(int row1, int column1, int row2, int column2, int board_size
 int random_number_generator(int board_size);
 char random_symbol_generator();
 
-void scoreToFile(FILE *fp, int score, char nameWinner[MAX_STR], char open_status, int scoreboard[TOTAL_NAME]);
-void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char arrayNames[TOTAL_NAME][MAX_STR]);
+void scoreToFile(FILE *fp, int score, char nameWinner[MAX_STR], char open_status);
+void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char arrayNames[][MAX_STR]);
 
 int main()
 {
@@ -54,12 +54,7 @@ int main()
 	
 	int row1 = 1, column1 = 1, row2 = 2, column2 = 2;
 
-	// initialize scoreboard array
-	// -1 intiialization indicates it's not a true score 
-	for(int index = 0; index < TOTAL_NAME; index++)
-	{
-		scoreboard[index] = -1;
-	}
+
 	
 	
 	do
@@ -73,9 +68,8 @@ int main()
 				difficulty = difficultySelect();
 				game(difficulty, &score, nameWinner);
 
-				if((fopen("scores.txt", "r")) == NULL)
+				if((fp = (fopen("scores.txt", "r"))) == NULL)
 				{
-					fp = fopen("scores.txt", "w");
 					open_status = 'w';
 				}
 				else
@@ -83,16 +77,22 @@ int main()
 					fp = fopen("scores.txt", "r");
 					open_status = 'r';
 				}
-//				scoreToFile(fp, score, nameWinner, open_status, scoreboard);
+				scoreToFile(fp, score, nameWinner, open_status);
 				fclose(fp);
 //				outputnames(fp, array, &score);
 				break;
 				
 			case 2:	// second case deals with scoreboard display.
 
-				fp = fopen("scores.txt", "r");
-				displayScore(fp);
-				fclose(fp);
+				if((fp = (fopen("scores.txt", "r"))) == NULL)
+				{
+					printf("**HIGH SCORES**\n\n");
+				}
+				else
+				{
+					displayScore(fp);
+					fclose(fp);
+				}
 				break;
 				
 			case 0:	// case 0 does nothing.
@@ -488,7 +488,6 @@ void prefill_bool_board(int board_size, _Bool match_board[][board_size + 1])
 /*
 //Keeps track of which cards have been mathced, with bools. Returns won bool as true when the game is over.
 _Bool matches_made_board(int difficulty, int *row1, int *column1, int *row2, int *column2, int board_size, char game_board[][board_size + 1], _Bool match_board[][board_size + 1])
-
 {
     int win_matches = 0, matches = 0;
     _Bool match = 0;
@@ -496,8 +495,6 @@ _Bool matches_made_board(int difficulty, int *row1, int *column1, int *row2, int
     
     //Call check match to check of their is a match between the two coordiante pairs.
     match = check_matches(*row1, *column1, *row2, *column2, board_size, game_board);
-
-
     //If there is match, assign those locations on the bool board 1's and increment the number of matches made
     if(match)
     {
@@ -505,7 +502,6 @@ _Bool matches_made_board(int difficulty, int *row1, int *column1, int *row2, int
         match_board[*row2 - 1][*column2 - 1] = 1;
         matches++;
     }
-
     //display matches made board
     printf("\n");
     for(int row_index = 0; row_index < board_size; row_index++)
@@ -524,13 +520,11 @@ _Bool matches_made_board(int difficulty, int *row1, int *column1, int *row2, int
         }   
         printf("\n");
     }
-
     //game is won, end function
     if(matches == win_matches)
     {
         return 1;
     }
-
     //game is not won, end function
     return 0;
 }
@@ -599,6 +593,13 @@ void displayScore(FILE *fp)
 	int scoreboard[TOTAL_NAME];
 	char array[10][100];
 
+	// initialize scoreboard array
+	// -1 intiialization indicates it's not a true score 
+	for(int index = 0; index < TOTAL_NAME; index++)
+	{
+		scoreboard[index] = -1;
+	}
+
 	while(fscanf(fp, "%s %d\n", array[indexScore], &scoreboard[indexScore]) == 2)
 	{
 		counter++;
@@ -614,47 +615,59 @@ void displayScore(FILE *fp)
 
 	printf("\n");
 }
-/*
-void scoreToFile(FILE *fp, int score, char name[MAX_STR], char open_status, int scoreboard[TOTAL_NAME])
+
+void scoreToFile(FILE *fp, int score, char name[MAX_STR], char open_status)
 {
 	char arrayNames[TOTAL_NAME][MAX_STR];
+	int scoreboard[TOTAL_NAME];
 	int tempIndex = 0, iteration = 0, counter = 0;
 
-	if(open_status == 'r')
+	// initialize scoreboard array
+	// -1 intiialization indicates it's not a true score 
+	for(int index = 0; index < TOTAL_NAME; index++)
 	{
-		scoreSort(fp, name, score, scoreboard, arrayNames);
-	}
-	else
-	{
-		while(fscanf(fp, "%s %d\n", arrayNames[tempIndex], &scoreboard[tempIndex]) == 2)
-		{
-			counter++;
-			tempIndex++;
-			printf("\nCOUNTING (scoreToFile): %d\n", counter);
-		}
+		scoreboard[index] = -1;
 	}
 
+	while(fscanf(fp, "%s %d\n", arrayNames[tempIndex], &scoreboard[tempIndex]) == 2)
+	{
+		counter++;
+		tempIndex++;
+		printf("%s: ", arrayNames[tempIndex]);
+		printf("%d\n", scoreboard[tempIndex]);
+		printf("\nCOUNTING (scoreToFile status'r'): %d\n", counter);
+	}
+		
 	fclose(fp);
 	fp = fopen("scores.txt", "a");
 
+	
+	if(open_status == 'w')
+	{
+		while(fscanf(fp, "%s %d", arrayNames[tempIndex], &scoreboard[tempIndex]) == 2)
+		{
+			counter++;
+			tempIndex++;
+			printf("\nCOUNTING (scoreToFile status'w'): %d\n", counter);
+		}
+	}
+/*
 	while(iteration != 9);
 	{
 		(fprintf(fp, "%s %d\n", arrayNames[tempIndex], scoreboard[tempIndex]));
 		tempIndex++;
 		iteration++;
 		printf("\nITERATING (scoreToFile): %d\n", counter);
-	}
+	}*/
 }
-
-void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char array[TOTAL_NAME][MAX_STR])
+void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_NAME], char array[][MAX_STR])
 {
 	int scoreTotal, scoreStore, tempIndex, counter;
 	char nameStore[TOTAL_NAME][MAX_STR];
-
 	// Check how many scores there are ('counter' variable):
 	tempIndex = 0;
 	counter = 0;
-	while(fscanf(fp, "%s %d\n", array[tempIndex], &scoreboard[tempIndex]) == 2)
+	while(fscanf(fp, "%s %d", array[tempIndex], &scoreboard[tempIndex]) == 2)
 	{
 		counter++;
 		tempIndex++;
@@ -662,8 +675,6 @@ void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_
 		printf("%d\n", scoreboard[tempIndex]);
 		printf("\nCOUNTING (scoreSort): %d\n", counter);
 	}
-
-
 /*
 	// SORTING
 	if(scoreboard[0] < 0)
@@ -683,7 +694,7 @@ void scoreSort(FILE *fp, char name[MAX_STR], int scoreNew, int scoreboard[TOTAL_
 	}
 */
 
-//}
+}
 
 /*
 	for(int index = 0; index < counter; counter++)
